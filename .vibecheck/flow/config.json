@@ -1,0 +1,13 @@
+{
+  "version": "1.0.0",
+  "projectName": "movie_verse_app",
+  "userName": "developer",
+  "skillLevel": "intermediate",
+  "outputFolder": ".vibecheck/flow",
+  "planningArtifacts": ".vibecheck\\flow\\planning-artifacts",
+  "implementationArtifacts": ".vibecheck\\flow\\implementation-artifacts",
+  "installedAt": "2026-04-04T11:51:04.936Z",
+  "ide": [
+    "vscode"
+  ]
+}
