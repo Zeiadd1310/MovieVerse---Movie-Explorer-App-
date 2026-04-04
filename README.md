@@ -1,4 +1,4 @@
-# CineScope - Movie Explorer App
+# MovieVerse - Movie Explorer App
 
 Flutter application that allows users to explore trending movies,
 search for films, and save them to a watchlist using TMDB API.
