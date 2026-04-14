@@ -1,6 +1,7 @@
 import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:movie_verse_app/core/utils/functions/assets.dart';
+import 'package:movie_verse_app/features/auth/presentation/views/sign_up_view.dart';
 
 class SplashViewBody extends StatefulWidget {
   const SplashViewBody({super.key});
@@ -66,10 +67,10 @@ class _SplashViewBodyState extends State<SplashViewBody>
 
     await Future.delayed(const Duration(milliseconds: 400));
     if (!mounted) return;
-    // Navigator.pushReplacement(
-    //   context,
-    //   MaterialPageRoute(builder: (_) => const SignInScreen()),
-    // );
+    Navigator.pushReplacement(
+      context,
+      MaterialPageRoute(builder: (_) => const SignUpView()),
+    );
   }
 
   @override

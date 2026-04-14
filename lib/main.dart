@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:movie_verse_app/core/utils/functions/app_router.dart';
 
 void main() {
@@ -10,10 +11,15 @@ class MovieVerseApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp.router(
-      routerConfig: AppRouter.router,
-      debugShowCheckedModeBanner: false,
-      theme: ThemeData(fontFamily: 'Inter'),
+    return ScreenUtilInit(
+      designSize: const Size(390, 908),
+      minTextAdapt: true,
+      splitScreenMode: true,
+      builder: (context, child) => MaterialApp.router(
+        routerConfig: AppRouter.router,
+        debugShowCheckedModeBanner: false,
+        theme: ThemeData(fontFamily: 'Inter'),
+      ),
     );
   }
 }
