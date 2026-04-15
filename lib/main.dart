@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-// Ensure this path is where the Review UI code is saved
-import 'package:movie_verse_app/features/movie_details/presentation/views/review_rating_screen.dart';
+import 'package:google_fonts/google_fonts.dart'; // Import this!
+import 'package:movie_verse_app/features/movie_details/presentation/views/movie_details_view.dart';
 
 void main() {
   runApp(const MovieVerseApp());
@@ -15,12 +15,12 @@ class MovieVerseApp extends StatelessWidget {
       debugShowCheckedModeBanner: false,
       theme: ThemeData(
         brightness: Brightness.dark,
-        fontFamily: 'Inter',
-        useMaterial3: true,
+        // This applies Inter to the entire app's text system
+        textTheme: GoogleFonts.interTextTheme(
+          Theme.of(context).textTheme,
+        ).apply(bodyColor: Colors.white, displayColor: Colors.white),
       ),
-      // CHANGE THIS to the exact class name inside review_rating_screen.dart
-      // If you used the code I gave you earlier, it is likely 'ReviewPage'
-      home: const ReviewPage(), 
+      home: MovieDetailsScreen(),
     );
   }
 }
