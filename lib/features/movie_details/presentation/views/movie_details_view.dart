@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
-class MovieDetailsScreen extends StatelessWidget {
-  const MovieDetailsScreen({super.key});
+class MovieDetailsView extends StatelessWidget {
+  const MovieDetailsView({super.key});
 
   @override
   Widget build(BuildContext context) {

@@ -2,14 +2,14 @@ import 'package:flutter/material.dart';
 import 'package:movie_verse_app/widgets/movie_card.dart';
 import 'package:movie_verse_app/widgets/rating_card.dart';
 
-class ReviewPage extends StatefulWidget {
-  const ReviewPage({super.key});
+class ReviewRatingScreen extends StatefulWidget {
+  const ReviewRatingScreen({super.key});
 
   @override
-  State<ReviewPage> createState() => _ReviewPageState();
+  State<ReviewRatingScreen> createState() => _ReviewPageState();
 }
 
-class _ReviewPageState extends State<ReviewPage> {
+class _ReviewPageState extends State<ReviewRatingScreen> {
   // State variables to keep track of user input
   bool _isSpoiler = false;
   final List<String> _selectedTags = [];
