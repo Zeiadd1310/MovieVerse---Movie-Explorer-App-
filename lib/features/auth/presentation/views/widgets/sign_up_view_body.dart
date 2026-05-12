@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:go_router/go_router.dart';
 import 'package:movie_verse_app/constants.dart';
+import 'package:movie_verse_app/core/utils/functions/app_router.dart';
 import 'package:movie_verse_app/core/utils/functions/assets.dart';
 import 'package:movie_verse_app/core/widgets/app_text_form_field.dart';
 import 'package:movie_verse_app/core/widgets/custom_button.dart';
@@ -201,6 +203,11 @@ class SignUpViewBody extends StatelessWidget {
                   ),
                   SizedBox(width: 4.w),
                   GestureDetector(
+                    onTap: () {
+                      GoRouter.of(
+                        context,
+                      ).pushReplacement(AppRouter.kSignInView);
+                    },
                     child: Text(
                       'Sign in instead',
                       style: TextStyle(
