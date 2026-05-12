@@ -101,6 +101,11 @@ class SignInViewBody extends StatelessWidget {
                     ),
                     SizedBox(height: 20.h),
                     CustomButton(
+                      onTap: () {
+                        GoRouter.of(
+                          context,
+                        ).pushReplacement(AppRouter.kMovieDetailsView);
+                      },
                       text: 'SIGN IN',
                       width: double.infinity,
                       height: 56.h,
