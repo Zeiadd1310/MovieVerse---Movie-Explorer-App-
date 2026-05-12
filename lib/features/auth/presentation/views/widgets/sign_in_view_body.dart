@@ -78,6 +78,11 @@ class SignInViewBody extends StatelessWidget {
                           ),
                         ),
                         InkWell(
+                          onTap: () {
+                            GoRouter.of(
+                              context,
+                            ).push(AppRouter.kForgotPasswordView);
+                          },
                           child: Text(
                             'Forgot Password?',
                             style: TextStyle(

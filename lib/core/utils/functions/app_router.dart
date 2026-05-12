@@ -1,4 +1,5 @@
 import 'package:go_router/go_router.dart';
+import 'package:movie_verse_app/features/auth/presentation/views/forgot_password_view.dart';
 import 'package:movie_verse_app/features/auth/presentation/views/sign_in_view.dart';
 import 'package:movie_verse_app/features/auth/presentation/views/sign_up_view.dart';
 import 'package:movie_verse_app/features/auth/presentation/views/splash_view.dart';
@@ -11,6 +12,7 @@ abstract class AppRouter {
   static const kSignInView = '/signInView';
   static const kMovieDetailsView = '/movieDetailsView';
   static const kReviewRatingScreen = '/reviewRatingScreen';
+  static const kForgotPasswordView = '/forgotPasswordView';
 
   static final router = GoRouter(
     routes: [
@@ -30,6 +32,10 @@ abstract class AppRouter {
       GoRoute(
         path: kReviewRatingScreen,
         builder: (context, state) => const ReviewRatingScreen(),
+      ),
+      GoRoute(
+        path: kForgotPasswordView,
+        builder: (context, state) => const ForgotPasswordView(),
       ),
     ],
   );
