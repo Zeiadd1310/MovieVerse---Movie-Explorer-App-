@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:movie_verse_app/widgets/movie_card.dart';
-import 'package:movie_verse_app/widgets/rating_card.dart';
+import 'package:movie_verse_app/features/movie_details/presentation/views/widgets/movie_card.dart';
+import 'package:movie_verse_app/features/movie_details/presentation/views/widgets/rating_card.dart';
+import 'package:movie_verse_app/core/widgets/custom_button.dart';
 
 class ReviewRatingScreen extends StatefulWidget {
   const ReviewRatingScreen({super.key});
@@ -18,7 +19,7 @@ class _ReviewPageState extends State<ReviewRatingScreen> {
   @override
   Widget build(BuildContext context) {
     // Standardized colors from the design
-    const backgroundColor = Color(0xFF121214);
+    const backgroundColor = Color(0xFFE1015);
     const cardColor = Color(0xFF1C1C1E);
     const accentColor = Color(0xFFFFC107);
     const chipColor = Color(0xFF2C2C2E);
@@ -185,32 +186,33 @@ class _ReviewPageState extends State<ReviewRatingScreen> {
             const SizedBox(height: 40),
             
             // Final Submit Button
-            SizedBox(
-              width: double.infinity,
-              height: 58,
-              child: ElevatedButton(
-                onPressed: () {
-                  // Action for submitting
-                },
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: accentColor,
-                  elevation: 5,
-                  shadowColor: Colors.black.withOpacity(0.5),
-                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(30)),
-                ),
-                child: const Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Text(
-                      'Submit Review', 
-                      style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold, fontSize: 16)
-                    ),
-                    SizedBox(width: 10),
-                    Icon(Icons.play_arrow_outlined, color: Colors.black, size: 20),
-                  ],
-                ),
-              ),
-            ),
+           SizedBox(
+  width: double.infinity,
+  height: 58,
+
+  child: CustomButton(
+    text: 'Submit Review',
+
+    width: double.infinity,
+    height: 58,
+
+    radius: 30,
+
+    color: accentColor,
+
+    icon: Icons.play_arrow_outlined,
+
+    style: const TextStyle(
+      color: Colors.black,
+      fontWeight: FontWeight.bold,
+      fontSize: 16,
+    ),
+
+    onTap: () {
+      // Action for submitting
+    },
+  ),
+),
             const SizedBox(height: 20),
           ],
         ),

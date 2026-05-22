@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:movie_verse_app/core/widgets/custom_nav_bar.dart';
+import 'package:movie_verse_app/core/widgets/custom_button.dart';
 
 class MovieDetailsView extends StatelessWidget {
   const MovieDetailsView({super.key});
@@ -9,7 +11,7 @@ class MovieDetailsView extends StatelessWidget {
     // 1. Updated Colors to match close-ups exactly
     const accentColor = Color(0xFFF9B81F); 
     const slateText = Color(0xFF94A3B8); // Muted color for descriptions/labels
-    const bgColor = Color(0xFF0F1014); // Deep black/grey background
+    const bgColor = Color(0xFFE1015); // Deep black/grey background
 
     return Scaffold(
       backgroundColor: bgColor,
@@ -81,7 +83,7 @@ class MovieDetailsView extends StatelessWidget {
         ],
       ),
       // 8. Custom Bottom Navigation to match images
-      bottomNavigationBar: _buildBottomNav(accentColor, slateText),
+     // bottomNavigationBar: _buildBottomNav(accentColor, slateText),
     );
   }
 
@@ -242,47 +244,37 @@ class MovieDetailsView extends StatelessWidget {
     );
   }
 
-  Widget _buildFloatingWatchButton(Color accentColor) {
-    return Positioned(
-      bottom: 30, // Adjust bottom margin as needed
-      left: 20,
-      right: 20,
-      child: Container(
-        height: 60, // Fixed height for standard UI feel
-        decoration: BoxDecoration(
-          color: accentColor,
-          borderRadius: BorderRadius.circular(30),
-          boxShadow: [
-            BoxShadow(
-              // The specific glowing effect
-              color: accentColor.withOpacity(0.35), 
-              blurRadius: 18, 
-              offset: const Offset(0, 10),
-            )
-          ],
-        ),
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            // Rounded play icon
-            const Icon(Icons.play_arrow_rounded, color: Colors.black, size: 32),
-            const SizedBox(width: 8),
-            Text(
-              'Watch Now', 
-              style: GoogleFonts.inter(
-                color: Colors.black, 
-                fontWeight: FontWeight.w800, 
-                fontSize: 18,
-                letterSpacing: -0.5,
-              )
-            ),
-          ],
-        ),
-      ),
-    );
-  }
+ Widget _buildFloatingWatchButton(Color accentColor) {
+  return Positioned(
+    bottom: 30,
+    left: 20,
+    right: 20,
 
-  Widget _buildBottomNav(Color accentColor, Color slateText) {
+    child: CustomButton(
+      text: 'Watch Now',
+
+      width: double.infinity,
+      height: 60,
+
+      radius: 30,
+
+      color: accentColor,
+
+      icon: Icons.play_arrow_rounded,
+
+      style: GoogleFonts.inter(
+        color: Colors.white,
+        fontWeight: FontWeight.w800,
+        fontSize: 18,
+        letterSpacing: -0.5,
+      ),
+
+      onTap: () {},
+    ),
+  );
+}
+
+  /*Widget _buildBottomNav(Color accentColor, Color slateText) {
     return BottomNavigationBar(
       backgroundColor: const Color(0xFF0F1014),
       selectedItemColor: accentColor,
@@ -298,5 +290,5 @@ class MovieDetailsView extends StatelessWidget {
         BottomNavigationBarItem(icon: Icon(Icons.person_outline), label: 'Profile'),
       ],
     );
-  }
+  }*/
 }
