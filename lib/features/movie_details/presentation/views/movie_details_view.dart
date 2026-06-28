@@ -1,147 +1,136 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:movie_verse_app/constants.dart';
+import 'package:movie_verse_app/core/data/models/movie.dart';
+import 'package:movie_verse_app/core/data/static/static_data.dart';
+import 'package:movie_verse_app/core/utils/functions/app_router.dart';
 
 class MovieDetailsView extends StatelessWidget {
   const MovieDetailsView({super.key});
 
   @override
   Widget build(BuildContext context) {
-    // 1. Updated Colors to match close-ups exactly
-    const accentColor = Color(0xFFF9B81F); 
-    const slateText = Color(0xFF94A3B8); // Muted color for descriptions/labels
-    const bgColor = Color(0xFF0F1014); // Deep black/grey background
+    final movieId = GoRouterState.of(context).pathParameters['movieId'];
+    final movie = StaticData.movieById(movieId ?? StaticData.interstellar.id);
 
     return Scaffold(
-      backgroundColor: bgColor,
+      backgroundColor: kDetailsBackground,
       body: Stack(
         children: [
-          // 2. Scrollable Content Layer
           SingleChildScrollView(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                _buildHeader(context),
+                _buildHeader(context, movie),
                 Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 20),
+                  padding: EdgeInsets.symmetric(horizontal: 20.w),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      const SizedBox(height: 25),
-                      // 3. Dynamic Font Handling for Interstellar Title
+                      SizedBox(height: 25.h),
                       Text(
-                        'Interstellar',
+                        movie.title,
                         style: GoogleFonts.inter(
-                          fontSize: 34,
+                          fontSize: 34.sp,
                           fontWeight: FontWeight.w800,
                           color: Colors.white,
-                          letterSpacing: -1.2, // Essential tight look
+                          letterSpacing: -1.2,
                         ),
                       ),
-                      const SizedBox(height: 10),
-                      // 4. Star Rating and Meta Info Row
+                      SizedBox(height: 10.h),
                       Row(
                         children: [
-                          const Icon(Icons.star, color: accentColor, size: 20),
-                          const SizedBox(width: 6),
+                          Icon(Icons.star, color: kButtonsColor, size: 20.sp),
+                          SizedBox(width: 6.w),
                           Text(
-                            '4.8 (1.2M)  •  2h 49m  •  2014',
+                            movie.meta,
                             style: GoogleFonts.inter(
-                              color: slateText,
-                              fontSize: 14,
+                              color: kSlateText,
+                              fontSize: 14.sp,
                               fontWeight: FontWeight.w500,
                             ),
                           ),
                         ],
                       ),
-                      const SizedBox(height: 30),
-                      // 5. Clean Overview Section
-                      _buildSectionTitle('Overview'),
-                      const SizedBox(height: 12),
+                      SizedBox(height: 30.h),
+                      _sectionTitle('Overview'),
+                      SizedBox(height: 12.h),
                       Text(
-                        'When Earth becomes uninhabitable in the future, a farmer and ex-NASA pilot, Joseph Cooper, is tasked to pilot a spacecraft, along with a team of researchers, to find a new planet for humans.',
+                        movie.overview,
                         style: GoogleFonts.inter(
-                          color: slateText,
-                          fontSize: 15,
+                          color: kSlateText,
+                          fontSize: 15.sp,
                           height: 1.7,
                           fontWeight: FontWeight.w400,
                         ),
                       ),
-                      const SizedBox(height: 35),
-                      // 6. Cast Section with Updated Avatars
-                      _buildCastSection(accentColor, slateText),
-                      const SizedBox(height: 140), // Large space for the floating button
+                      SizedBox(height: 35.h),
+                      _buildCastSection(movie),
+                      SizedBox(height: 140.h),
                     ],
                   ),
                 ),
               ],
             ),
           ),
-          // 7. Floating Watch Button with Glowing Shadow
-          _buildFloatingWatchButton(accentColor),
+          _buildFloatingWatchButton(context, movie.id),
         ],
       ),
-      // 8. Custom Bottom Navigation to match images
-      bottomNavigationBar: _buildBottomNav(accentColor, slateText),
     );
   }
 
-  // --- UI Component Methods ---
-
-  Widget _buildHeader(BuildContext context) {
+  Widget _buildHeader(BuildContext context, MovieDetails movie) {
     return Stack(
       children: [
-        // Darkened space image
-        Image.network(
-          'https://image.tmdb.org/t/p/original/gEU2QniE6E77NI6vCU6mfsjvYv0.jpg',
-          height: 500,
+        Image.asset(
+          movie.imageAsset,
+          height: 500.h,
           width: double.infinity,
           fit: BoxFit.cover,
         ),
-        // Subtle dark gradient for readability
         Container(
-          height: 500,
+          height: 500.h,
           decoration: BoxDecoration(
             gradient: LinearGradient(
               begin: Alignment.topCenter,
               end: Alignment.bottomCenter,
               colors: [
-                Colors.black.withOpacity(0.3),
+                Colors.black.withValues(alpha: 0.3),
                 Colors.transparent,
-                const Color(0xFF0F1014),
+                kDetailsBackground,
               ],
             ),
           ),
         ),
-        // Top Icon Buttons (Circular overlays)
         Positioned(
-          top: 55,
-          left: 20,
-          right: 20,
+          top: 55.h,
+          left: 20.w,
+          right: 20.w,
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              _circleIcon(Icons.arrow_back),
+              _circleIcon(Icons.arrow_back, onTap: () => context.pop()),
               Row(
                 children: [
                   _circleIcon(Icons.favorite_border),
-                  const SizedBox(width: 15),
+                  SizedBox(width: 15.w),
                   _circleIcon(Icons.share_outlined),
                 ],
               ),
             ],
           ),
         ),
-        // Badges positioned low on the image
         Positioned(
-          bottom: 25,
-          left: 20,
+          bottom: 25.h,
+          left: 20.w,
           child: Row(
             children: [
-              _genreChip('SCI-FI', isYellow: true),
-              const SizedBox(width: 8),
-              _genreChip('ADVENTURE'),
-              const SizedBox(width: 8),
-              _genreChip('DRAMA'),
+              for (int i = 0; i < movie.genreTags.length; i++) ...[
+                if (i > 0) SizedBox(width: 8.w),
+                _genreChip(movie.genreTags[i], isYellow: i == 0),
+              ],
             ],
           ),
         ),
@@ -149,32 +138,29 @@ class MovieDetailsView extends StatelessWidget {
     );
   }
 
-  Widget _buildCastSection(Color accentColor, Color slateText) {
+  Widget _buildCastSection(MovieDetails movie) {
     return Column(
       children: [
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            _buildSectionTitle('Top Cast'),
-            Text('See All',
+            _sectionTitle('Top Cast'),
+            Text(
+              'See All',
               style: GoogleFonts.inter(
-                color: accentColor,
+                color: kButtonsColor,
                 fontWeight: FontWeight.w700,
-                fontSize: 14,
-              )
+                fontSize: 14.sp,
+              ),
             ),
           ],
         ),
-        const SizedBox(height: 20),
+        SizedBox(height: 20.h),
         SingleChildScrollView(
           scrollDirection: Axis.horizontal,
           child: Row(
             children: [
-              // Using TMDB links for correct actor imagery
-              _castAvatar('Matthew McConaughey', 'https://www.themoviedb.org/t/p/w300_and_h450_bestv2/e9pMgR7vYICkmv96SStpU308tS7.jpg', slateText),
-              _castAvatar('Anne Hathaway', 'https://www.themoviedb.org/t/p/w300_and_h450_bestv2/7S9pS9m4N0fV0mU9zX6W1m4.jpg', slateText),
-              _castAvatar('Jessica Chastain', 'https://www.themoviedb.org/t/p/w300_and_h450_bestv2/m8iYvY66SArzE0N3Eq9T0f6EqP7.jpg', slateText),
-              _castAvatar('Michael Caine', 'https://www.themoviedb.org/t/p/w300_and_h450_bestv2/h9S68u8896ySZZZf36uX2kH5.jpg', slateText),
+              for (final member in movie.cast) _castAvatar(member),
             ],
           ),
         ),
@@ -182,121 +168,121 @@ class MovieDetailsView extends StatelessWidget {
     );
   }
 
-  // --- Helper Widgets with Detailed Styling ---
-
-  Widget _circleIcon(IconData icon) {
-    return Container(
-      padding: const EdgeInsets.all(10),
-      decoration: const BoxDecoration(color: Colors.black54, shape: BoxShape.circle),
-      child: Icon(icon, color: Colors.white, size: 22),
+  Widget _circleIcon(IconData icon, {VoidCallback? onTap}) {
+    return GestureDetector(
+      onTap: onTap,
+      child: Container(
+        padding: EdgeInsets.all(10.r),
+        decoration: const BoxDecoration(
+          color: Colors.black54,
+          shape: BoxShape.circle,
+        ),
+        child: Icon(icon, color: Colors.white, size: 22.sp),
+      ),
     );
   }
 
   Widget _genreChip(String label, {bool isYellow = false}) {
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 6),
+      padding: EdgeInsets.symmetric(horizontal: 14.w, vertical: 6.h),
       decoration: BoxDecoration(
-        color: isYellow ? const Color(0xFFF9B81F) : const Color(0xFF1C1C1E),
-        borderRadius: BorderRadius.circular(10),
+        color: isYellow ? kButtonsColor : const Color(0xFF1C1C1E),
+        borderRadius: BorderRadius.circular(10.r),
       ),
       child: Text(
         label,
         style: GoogleFonts.inter(
           color: isYellow ? Colors.black : Colors.white70,
-          fontSize: 11,
-          fontWeight: FontWeight.w900, // Black Inter weight
+          fontSize: 11.sp,
+          fontWeight: FontWeight.w900,
           letterSpacing: 0.5,
         ),
       ),
     );
   }
 
-  Widget _castAvatar(String name, String imageUrl, Color slateText) {
+  Widget _castAvatar(CastMember member) {
+    final parts = member.name.split(' ');
     return Padding(
-      padding: const EdgeInsets.only(right: 20),
+      padding: EdgeInsets.only(right: 20.w),
       child: Column(
         children: [
           CircleAvatar(
-            radius: 38,
+            radius: 38.r,
             backgroundColor: Colors.white12,
-            backgroundImage: NetworkImage(imageUrl),
+            backgroundImage: AssetImage(member.imageAsset),
           ),
-          const SizedBox(height: 12),
+          SizedBox(height: 12.h),
           Text(
-            name.split(' ')[0],
-            style: GoogleFonts.inter(color: Colors.white, fontSize: 13, fontWeight: FontWeight.w600)
+            parts.first,
+            style: GoogleFonts.inter(
+              color: Colors.white,
+              fontSize: 13.sp,
+              fontWeight: FontWeight.w600,
+            ),
           ),
           Text(
-            name.split(' ').last,
-            style: GoogleFonts.inter(color: slateText, fontSize: 12)
+            parts.last,
+            style: GoogleFonts.inter(color: kSlateText, fontSize: 12.sp),
           ),
         ],
       ),
     );
   }
 
-  Widget _buildSectionTitle(String title) {
+  Widget _sectionTitle(String title) {
     return Text(
       title,
-      style: GoogleFonts.inter(fontSize: 22, fontWeight: FontWeight.w800, color: Colors.white),
-    );
-  }
-
-  Widget _buildFloatingWatchButton(Color accentColor) {
-    return Positioned(
-      bottom: 30, // Adjust bottom margin as needed
-      left: 20,
-      right: 20,
-      child: Container(
-        height: 60, // Fixed height for standard UI feel
-        decoration: BoxDecoration(
-          color: accentColor,
-          borderRadius: BorderRadius.circular(30),
-          boxShadow: [
-            BoxShadow(
-              // The specific glowing effect
-              color: accentColor.withOpacity(0.35), 
-              blurRadius: 18, 
-              offset: const Offset(0, 10),
-            )
-          ],
-        ),
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            // Rounded play icon
-            const Icon(Icons.play_arrow_rounded, color: Colors.black, size: 32),
-            const SizedBox(width: 8),
-            Text(
-              'Watch Now', 
-              style: GoogleFonts.inter(
-                color: Colors.black, 
-                fontWeight: FontWeight.w800, 
-                fontSize: 18,
-                letterSpacing: -0.5,
-              )
-            ),
-          ],
-        ),
+      style: GoogleFonts.inter(
+        fontSize: 22.sp,
+        fontWeight: FontWeight.w800,
+        color: Colors.white,
       ),
     );
   }
 
-  Widget _buildBottomNav(Color accentColor, Color slateText) {
-    return BottomNavigationBar(
-      backgroundColor: const Color(0xFF0F1014),
-      selectedItemColor: accentColor,
-      unselectedItemColor: slateText,
-      type: BottomNavigationBarType.fixed,
-      currentIndex: 0,
-      selectedLabelStyle: GoogleFonts.inter(fontSize: 12, fontWeight: FontWeight.w700),
-      unselectedLabelStyle: GoogleFonts.inter(fontSize: 12),
-      items: const [
-        BottomNavigationBarItem(icon: Icon(Icons.home_filled), label: 'Home'),
-        BottomNavigationBarItem(icon: Icon(Icons.explore_outlined), label: 'Explore'),
-        BottomNavigationBarItem(icon: Icon(Icons.bookmark_outline), label: 'Watchlist'),
-        BottomNavigationBarItem(icon: Icon(Icons.person_outline), label: 'Profile'),
-      ],
+  Widget _buildFloatingWatchButton(BuildContext context, String movieId) {
+    return Positioned(
+      bottom: 30.h,
+      left: 20.w,
+      right: 20.w,
+      child: GestureDetector(
+        onTap: () => context.push(AppRouter.reviewRatingPath(movieId)),
+        child: Container(
+          height: 60.h,
+          decoration: BoxDecoration(
+            color: kButtonsColor,
+            borderRadius: BorderRadius.circular(30.r),
+            boxShadow: [
+              BoxShadow(
+                color: kButtonsColor.withValues(alpha: 0.35),
+                blurRadius: 18,
+                offset: Offset(0, 10.h),
+              ),
+            ],
+          ),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Icon(
+                Icons.play_arrow_outlined,
+                color: Colors.black,
+                size: 32.sp,
+              ),
+              SizedBox(width: 8.w),
+              Text(
+                'Add Review',
+                style: GoogleFonts.inter(
+                  color: Colors.black,
+                  fontWeight: FontWeight.w800,
+                  fontSize: 18.sp,
+                  letterSpacing: -0.5,
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
     );
   }
 }

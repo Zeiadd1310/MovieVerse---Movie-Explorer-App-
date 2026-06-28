@@ -1,4 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:movie_verse_app/constants.dart';
+import 'package:movie_verse_app/core/data/models/movie.dart';
+import 'package:movie_verse_app/core/data/static/static_data.dart';
 
 class SearchView extends StatelessWidget {
   const SearchView({super.key});
@@ -6,230 +10,106 @@ class SearchView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xff0B0F1A),
-
-      bottomNavigationBar: BottomNavigationBar(
-        backgroundColor: const Color(0xff111827),
-        selectedItemColor: Colors.amber,
-        unselectedItemColor: Colors.grey,
-        currentIndex: 1,
-        type: BottomNavigationBarType.fixed,
-        elevation: 0,
-
-        items: const [
-
-          BottomNavigationBarItem(
-            icon: Icon(Icons.home_outlined),
-            label: "HOME",
-          ),
-
-          BottomNavigationBarItem(
-            icon: Icon(Icons.search),
-            label: "SEARCH",
-          ),
-
-          BottomNavigationBarItem(
-            icon: Icon(Icons.bookmark_border),
-            label: "WATCHLIST",
-          ),
-
-          BottomNavigationBarItem(
-            icon: Icon(Icons.person_outline),
-            label: "PROFILE",
-          ),
-        ],
-      ),
-
+      backgroundColor: kBackgroundColor,
       body: SafeArea(
         child: Padding(
-          padding: const EdgeInsets.symmetric(
-            horizontal: 18,
-            vertical: 14,
-          ),
-
+          padding: EdgeInsets.symmetric(horizontal: 18.w, vertical: 14.h),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
-
             children: [
-
-              /// HEADER
               Row(
-                mainAxisAlignment:
-                    MainAxisAlignment.spaceBetween,
-
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-
-                  const Text(
-                    "Explorer",
+                  Text(
+                    'Explorer',
                     style: TextStyle(
                       color: Colors.white,
-                      fontSize: 28,
+                      fontSize: 28.sp,
                       fontWeight: FontWeight.bold,
                     ),
                   ),
-
                   CircleAvatar(
-                    radius: 18,
-                    backgroundImage: AssetImage(
-                      "assets/images/profile.jpg",
+                    radius: 18.r,
+                    backgroundImage: const AssetImage(
+                      'assets/images/profile.jpg',
                     ),
                   ),
                 ],
               ),
-
-              const SizedBox(height: 25),
-
-              /// SEARCH BAR
+              SizedBox(height: 25.h),
               Container(
-                height: 55,
-
+                height: 55.h,
                 decoration: BoxDecoration(
                   color: const Color(0xff151C2C),
-                  borderRadius:
-                      BorderRadius.circular(30),
+                  borderRadius: BorderRadius.circular(30.r),
                 ),
-
-                child: const TextField(
-                  style: TextStyle(
-                    color: Colors.white,
-                  ),
-
+                child: TextField(
+                  style: TextStyle(color: Colors.white, fontSize: 14.sp),
                   decoration: InputDecoration(
                     border: InputBorder.none,
-
                     prefixIcon: Icon(
                       Icons.search,
                       color: Colors.grey,
+                      size: 22.sp,
                     ),
-
-                    hintText: "Search movies...",
-                    hintStyle: TextStyle(
-                      color: Colors.grey,
-                    ),
+                    hintText: 'Search movies...',
+                    hintStyle: TextStyle(color: Colors.grey, fontSize: 14.sp),
                   ),
                 ),
               ),
-
-              const SizedBox(height: 30),
-
-              /// TRENDING SEARCHES
-              const Text(
-                "Trending Searches",
+              SizedBox(height: 30.h),
+              Text(
+                'Trending Searches',
                 style: TextStyle(
                   color: Colors.white,
-                  fontSize: 18,
+                  fontSize: 18.sp,
                   fontWeight: FontWeight.w700,
                 ),
               ),
-
-              const SizedBox(height: 16),
-
+              SizedBox(height: 16.h),
               SingleChildScrollView(
                 scrollDirection: Axis.horizontal,
-
                 child: Row(
                   children: [
-
-                    searchChip(
-                      "Inception",
-                      true,
-                    ),
-
-                    searchChip(
-                      "The Dark Knight",
-                      false,
-                    ),
-
-                    searchChip(
-                      "Interstellar",
-                      false,
-                    ),
+                    for (int i = 0; i < StaticData.trendingSearches.length; i++)
+                      _searchChip(StaticData.trendingSearches[i], i == 0),
                   ],
                 ),
               ),
-
-              const SizedBox(height: 30),
-
-              /// RESULTS
+              SizedBox(height: 30.h),
               Row(
-                mainAxisAlignment:
-                    MainAxisAlignment.spaceBetween,
-
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-
-                  const Text(
-                    "Results",
+                  Text(
+                    'Results',
                     style: TextStyle(
                       color: Colors.white,
-                      fontSize: 20,
+                      fontSize: 20.sp,
                       fontWeight: FontWeight.bold,
                     ),
                   ),
-
                   Text(
-                    "1,240 MOVIES",
+                    '1,240 MOVIES',
                     style: TextStyle(
                       color: Colors.amber.shade700,
                       fontWeight: FontWeight.w600,
-                      fontSize: 12,
+                      fontSize: 12.sp,
                     ),
                   ),
                 ],
               ),
-
-              const SizedBox(height: 20),
-
+              SizedBox(height: 20.h),
               Expanded(
-                child: GridView.count(
-                  crossAxisCount: 2,
-                  crossAxisSpacing: 16,
-                  mainAxisSpacing: 20,
-                  childAspectRatio: 0.58,
-
-                  children: [
-
-                    movieCard(
-                      "assets/images/creator1.jpg",
-                      "The Creator",
-                      "2023 • Sci-Fi",
-                      "8.4",
-                    ),
-
-                    movieCard(
-                      "assets/images/peak.jpg",
-                      "Peak of Destiny",
-                      "2024 • Adventure",
-                      "7.9",
-                    ),
-
-                    movieCard(
-                      "assets/images/midnight.jpg",
-                      "Midnight Rhythm",
-                      "2022 • Musical",
-                      "9.1",
-                    ),
-
-                    movieCard(
-                      "assets/images/singularity.jpg",
-                      "Singularity",
-                      "2024 • Documentary",
-                      "8.6",
-                    ),
-
-                    movieCard(
-                      "assets/images/silent.jpg",
-                      "The Silent Page",
-                      "2021 • Mystery",
-                      "7.5",
-                    ),
-
-                    movieCard(
-                      "assets/images/projector.jpg",
-                      "Projector",
-                      "2023 • Thriller",
-                      "8.2",
-                    ),
-                  ],
+                child: GridView.builder(
+                  gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                    crossAxisCount: 2,
+                    crossAxisSpacing: 16.w,
+                    mainAxisSpacing: 20.h,
+                    childAspectRatio: 0.58,
+                  ),
+                  itemCount: StaticData.searchResults.length,
+                  itemBuilder: (_, index) =>
+                      _movieCard(StaticData.searchResults[index]),
                 ),
               ),
             ],
@@ -239,99 +119,59 @@ class SearchView extends StatelessWidget {
     );
   }
 
-  Widget searchChip(
-    String text,
-    bool selected,
-  ) {
+  Widget _searchChip(String text, bool selected) {
     return Container(
-      margin: const EdgeInsets.only(right: 10),
-
-      padding: const EdgeInsets.symmetric(
-        horizontal: 18,
-        vertical: 10,
-      ),
-
+      margin: EdgeInsets.only(right: 10.w),
+      padding: EdgeInsets.symmetric(horizontal: 18.w, vertical: 10.h),
       decoration: BoxDecoration(
-        color: selected
-            ? Colors.amber
-            : const Color(0xff151C2C),
-
-        borderRadius: BorderRadius.circular(30),
+        color: selected ? kButtonsColor : const Color(0xff151C2C),
+        borderRadius: BorderRadius.circular(30.r),
       ),
-
       child: Text(
         text,
-
         style: TextStyle(
-          color:
-              selected ? Colors.black : Colors.white,
+          color: selected ? Colors.black : Colors.white,
           fontWeight: FontWeight.w500,
+          fontSize: 14.sp,
         ),
       ),
     );
   }
 
-  Widget movieCard(
-    String image,
-    String title,
-    String subtitle,
-    String rating,
-  ) {
+  Widget _movieCard(Movie movie) {
     return Column(
-      crossAxisAlignment:
-          CrossAxisAlignment.start,
-
+      crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-
         Expanded(
           child: Stack(
             children: [
-
               Container(
                 decoration: BoxDecoration(
-                  borderRadius:
-                      BorderRadius.circular(24),
-
+                  borderRadius: BorderRadius.circular(24.r),
                   image: DecorationImage(
-                    image: AssetImage(image),
+                    image: AssetImage(movie.imageAsset),
                     fit: BoxFit.cover,
                   ),
                 ),
               ),
-
               Positioned(
-                top: 10,
-                right: 10,
-
+                top: 10.h,
+                right: 10.w,
                 child: Container(
-                  padding:
-                      const EdgeInsets.symmetric(
-                    horizontal: 8,
-                    vertical: 5,
-                  ),
-
+                  padding: EdgeInsets.symmetric(horizontal: 8.w, vertical: 5.h),
                   decoration: BoxDecoration(
                     color: const Color(0xff1A1A1A),
-                    borderRadius:
-                        BorderRadius.circular(20),
+                    borderRadius: BorderRadius.circular(20.r),
                   ),
-
                   child: Row(
                     children: [
-
-                      const Icon(
-                        Icons.star,
-                        color: Colors.amber,
-                        size: 14,
-                      ),
-
-                      const SizedBox(width: 4),
-
+                      Icon(Icons.star, color: kButtonsColor, size: 14.sp),
+                      SizedBox(width: 4.w),
                       Text(
-                        rating,
-                        style: const TextStyle(
+                        movie.rating,
+                        style: TextStyle(
                           color: Colors.white,
-                          fontSize: 11,
+                          fontSize: 11.sp,
                           fontWeight: FontWeight.w600,
                         ),
                       ),
@@ -342,26 +182,19 @@ class SearchView extends StatelessWidget {
             ],
           ),
         ),
-
-        const SizedBox(height: 10),
-
+        SizedBox(height: 10.h),
         Text(
-          title,
-          style: const TextStyle(
+          movie.title,
+          style: TextStyle(
             color: Colors.white,
-            fontSize: 15,
+            fontSize: 15.sp,
             fontWeight: FontWeight.w600,
           ),
         ),
-
-        const SizedBox(height: 5),
-
+        SizedBox(height: 5.h),
         Text(
-          subtitle,
-          style: TextStyle(
-            color: Colors.grey.shade400,
-            fontSize: 12,
-          ),
+          movie.subtitle,
+          style: TextStyle(color: Colors.grey.shade400, fontSize: 12.sp),
         ),
       ],
     );

@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:movie_verse_app/constants.dart';
+import 'package:movie_verse_app/core/data/static/static_data.dart';
 import 'package:movie_verse_app/widgets/movie_card.dart';
 import 'package:movie_verse_app/widgets/rating_card.dart';
 
@@ -10,17 +13,20 @@ class ReviewRatingScreen extends StatefulWidget {
 }
 
 class _ReviewPageState extends State<ReviewRatingScreen> {
-  // State variables to keep track of user input
   bool _isSpoiler = false;
   final List<String> _selectedTags = [];
   final TextEditingController _reviewController = TextEditingController();
 
   @override
+  void dispose() {
+    _reviewController.dispose();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
-    // Standardized colors from the design
     const backgroundColor = Color(0xFF121214);
     const cardColor = Color(0xFF1C1C1E);
-    const accentColor = Color(0xFFFFC107);
     const chipColor = Color(0xFF2C2C2E);
 
     return Scaffold(
@@ -31,187 +37,201 @@ class _ReviewPageState extends State<ReviewRatingScreen> {
         centerTitle: true,
         leading: IconButton(
           icon: Container(
-            padding: const EdgeInsets.all(8),
+            padding: EdgeInsets.all(8.r),
             decoration: const BoxDecoration(
-              color: chipColor, // Circular background for arrow
+              color: chipColor,
               shape: BoxShape.circle,
             ),
-            child: const Icon(Icons.arrow_back, color: Colors.white, size: 18),
+            child: Icon(Icons.arrow_back, color: Colors.white, size: 18.sp),
           ),
           onPressed: () => Navigator.pop(context),
         ),
-        title: const Text(
+        title: Text(
           'Write a Review',
           style: TextStyle(
             color: Colors.white,
-            fontSize: 18,
+            fontSize: 18.sp,
             fontWeight: FontWeight.bold,
           ),
         ),
       ),
       body: SingleChildScrollView(
-        padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+        padding: EdgeInsets.symmetric(horizontal: 20.w, vertical: 10.h),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // Movie Info Card
             const MovieCard(),
-            
-            const SizedBox(height: 30),
-            const Text(
-              'How was the movie?', 
-              style: TextStyle(color: Colors.white, fontSize: 16, fontWeight: FontWeight.bold)
+            SizedBox(height: 30.h),
+            Text(
+              'How was the movie?',
+              style: TextStyle(
+                color: Colors.white,
+                fontSize: 16.sp,
+                fontWeight: FontWeight.bold,
+              ),
             ),
-            const SizedBox(height: 12),
-            
-            // Interactive Star Rating Widget
+            SizedBox(height: 12.h),
             const RatingCard(),
-            
-            const SizedBox(height: 30),
-            
-            // Review Header
-            const Row(
+            SizedBox(height: 30.h),
+            Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 Text(
-                  'Your Review', 
-                  style: TextStyle(color: Colors.white, fontSize: 16, fontWeight: FontWeight.bold)
+                  'Your Review',
+                  style: TextStyle(
+                    color: Colors.white,
+                    fontSize: 16.sp,
+                    fontWeight: FontWeight.bold,
+                  ),
                 ),
-                Text('Optional', style: TextStyle(color: Colors.grey, fontSize: 12)),
+                Text(
+                  'Optional',
+                  style: TextStyle(color: Colors.grey, fontSize: 12.sp),
+                ),
               ],
             ),
-            const SizedBox(height: 12),
-            
-            // Text Input Field
+            SizedBox(height: 12.h),
             TextField(
               controller: _reviewController,
               maxLines: 5,
-              style: const TextStyle(color: Colors.white),
+              style: TextStyle(color: Colors.white, fontSize: 14.sp),
               decoration: InputDecoration(
-                hintText: 'What did you think of the story, acting, and visuals?',
-                hintStyle: const TextStyle(color: Colors.grey, fontSize: 14),
+                hintText:
+                    'What did you think of the story, acting, and visuals?',
+                hintStyle: TextStyle(color: Colors.grey, fontSize: 14.sp),
                 fillColor: cardColor,
                 filled: true,
                 border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(16), 
-                  borderSide: BorderSide.none
+                  borderRadius: BorderRadius.circular(16.r),
+                  borderSide: BorderSide.none,
                 ),
                 counterText: '${_reviewController.text.length} / 1000',
-                counterStyle: const TextStyle(color: Colors.grey),
+                counterStyle: TextStyle(color: Colors.grey, fontSize: 12.sp),
               ),
-              onChanged: (value) => setState(() {}), // Update character counter
+              onChanged: (_) => setState(() {}),
             ),
-            
-            const SizedBox(height: 25),
-            const Text(
-              'WHAT STOOD OUT?', 
-              style: TextStyle(color: Colors.grey, fontSize: 12, fontWeight: FontWeight.bold)
+            SizedBox(height: 25.h),
+            Text(
+              'WHAT STOOD OUT?',
+              style: TextStyle(
+                color: Colors.grey,
+                fontSize: 12.sp,
+                fontWeight: FontWeight.bold,
+              ),
             ),
-            const SizedBox(height: 12),
-            
-            // Interactive Feature Chips (Actual Buttons)
+            SizedBox(height: 12.h),
             Wrap(
-              spacing: 8,
-              runSpacing: 8,
-              children: [
-                'Visual Effects', 
-                'Acting', 
-                'Soundtrack', 
-                'Cinematography'
-              ].map((label) {
-                bool isSelected = _selectedTags.contains(label);
+              spacing: 8.w,
+              runSpacing: 8.h,
+              children: StaticData.reviewTags.map((label) {
+                final isSelected = _selectedTags.contains(label);
                 return FilterChip(
                   label: Text(label),
                   labelStyle: TextStyle(
                     color: isSelected ? Colors.black : Colors.white,
-                    fontSize: 12,
-                    fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
+                    fontSize: 12.sp,
+                    fontWeight:
+                        isSelected ? FontWeight.bold : FontWeight.normal,
                   ),
                   selected: isSelected,
-                  onSelected: (bool selected) {
+                  onSelected: (selected) {
                     setState(() {
-                      selected ? _selectedTags.add(label) : _selectedTags.remove(label);
+                      selected
+                          ? _selectedTags.add(label)
+                          : _selectedTags.remove(label);
                     });
                   },
                   backgroundColor: chipColor,
-                  selectedColor: accentColor,
+                  selectedColor: kButtonsColor,
                   showCheckmark: false,
                   shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(20),
-                    side: BorderSide(color: isSelected ? accentColor : Colors.transparent),
+                    borderRadius: BorderRadius.circular(20.r),
+                    side: BorderSide(
+                      color: isSelected ? kButtonsColor : Colors.transparent,
+                    ),
                   ),
                 );
               }).toList(),
             ),
-
-            const SizedBox(height: 30),
-
-            // Spoiler Toggle Card
+            SizedBox(height: 30.h),
             Container(
-              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+              padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 8.h),
               decoration: BoxDecoration(
-                color: cardColor, 
-                borderRadius: BorderRadius.circular(16)
+                color: cardColor,
+                borderRadius: BorderRadius.circular(16.r),
               ),
               child: Row(
                 children: [
-                  const Icon(Icons.warning_amber_rounded, color: Colors.redAccent),
-                  const SizedBox(width: 12),
-                  const Expanded(
+                  Icon(
+                    Icons.warning_amber_rounded,
+                    color: Colors.redAccent,
+                    size: 24.sp,
+                  ),
+                  SizedBox(width: 12.w),
+                  Expanded(
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
-                          'Contain Spoilers?', 
-                          style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold)
+                          'Contain Spoilers?',
+                          style: TextStyle(
+                            color: Colors.white,
+                            fontWeight: FontWeight.bold,
+                            fontSize: 14.sp,
+                          ),
                         ),
                         Text(
-                          'Hide review from others', 
-                          style: TextStyle(color: Colors.grey, fontSize: 11)
+                          'Hide review from others',
+                          style: TextStyle(color: Colors.grey, fontSize: 11.sp),
                         ),
                       ],
                     ),
                   ),
                   Switch(
-                    value: _isSpoiler, 
+                    value: _isSpoiler,
                     onChanged: (val) => setState(() => _isSpoiler = val),
-                    activeColor: Colors.white,
+                    activeThumbColor: Colors.white,
                     activeTrackColor: Colors.grey,
                   ),
                 ],
               ),
             ),
-
-            const SizedBox(height: 40),
-            
-            // Final Submit Button
+            SizedBox(height: 40.h),
             SizedBox(
               width: double.infinity,
-              height: 58,
+              height: 58.h,
               child: ElevatedButton(
-                onPressed: () {
-                  // Action for submitting
-                },
+                onPressed: () {},
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: accentColor,
+                  backgroundColor: kButtonsColor,
                   elevation: 5,
-                  shadowColor: Colors.black.withOpacity(0.5),
-                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(30)),
+                  shadowColor: Colors.black.withValues(alpha: 0.5),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(30.r),
+                  ),
                 ),
-                child: const Row(
+                child: Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     Text(
-                      'Submit Review', 
-                      style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold, fontSize: 16)
+                      'Submit Review',
+                      style: TextStyle(
+                        color: Colors.black,
+                        fontWeight: FontWeight.bold,
+                        fontSize: 16.sp,
+                      ),
                     ),
-                    SizedBox(width: 10),
-                    Icon(Icons.play_arrow_outlined, color: Colors.black, size: 20),
+                    SizedBox(width: 10.w),
+                    Icon(
+                      Icons.play_arrow_outlined,
+                      color: Colors.black,
+                      size: 20.sp,
+                    ),
                   ],
                 ),
               ),
             ),
-            const SizedBox(height: 20),
+            SizedBox(height: 20.h),
           ],
         ),
       ),

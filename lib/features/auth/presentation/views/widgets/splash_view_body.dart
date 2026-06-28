@@ -1,7 +1,11 @@
 import 'dart:math';
+
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:go_router/go_router.dart';
+import 'package:movie_verse_app/constants.dart';
+import 'package:movie_verse_app/core/utils/functions/app_router.dart';
 import 'package:movie_verse_app/core/utils/functions/assets.dart';
-import 'package:movie_verse_app/features/auth/presentation/views/sign_up_view.dart';
 
 class SplashViewBody extends StatefulWidget {
   const SplashViewBody({super.key});
@@ -67,10 +71,7 @@ class _SplashViewBodyState extends State<SplashViewBody>
 
     await Future.delayed(const Duration(milliseconds: 400));
     if (!mounted) return;
-    Navigator.pushReplacement(
-      context,
-      MaterialPageRoute(builder: (_) => const SignUpView()),
-    );
+    context.go(AppRouter.kSignUpView);
   }
 
   @override
@@ -88,15 +89,15 @@ class _SplashViewBodyState extends State<SplashViewBody>
               crossAxisAlignment: CrossAxisAlignment.center,
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                Image.asset(AssetsData.logo),
+                Image.asset(AssetsData.logo, width: 120.w, height: 120.h),
                 RichText(
-                  text: const TextSpan(
+                  text: TextSpan(
                     children: [
                       TextSpan(
                         text: 'MOVIE',
                         style: TextStyle(
-                          color: Color(0xFFF1F5F9),
-                          fontSize: 36,
+                          color: const Color(0xFFF1F5F9),
+                          fontSize: 36.sp,
                           fontWeight: FontWeight.bold,
                           letterSpacing: 1,
                         ),
@@ -104,8 +105,8 @@ class _SplashViewBodyState extends State<SplashViewBody>
                       TextSpan(
                         text: 'VERSE',
                         style: TextStyle(
-                          color: Color(0xFFF9B81F),
-                          fontSize: 36,
+                          color: kButtonsColor,
+                          fontSize: 36.sp,
                           fontWeight: FontWeight.bold,
                           letterSpacing: 1,
                         ),
@@ -113,63 +114,59 @@ class _SplashViewBodyState extends State<SplashViewBody>
                     ],
                   ),
                 ),
-                const SizedBox(height: 5),
-                const Text(
+                SizedBox(height: 5.h),
+                Text(
                   'PREMIUM MOVIE EXPLORER',
                   style: TextStyle(
-                    color: Color(0xff94A3B8),
-                    fontSize: 12,
+                    color: kSlateText,
+                    fontSize: 12.sp,
                     fontWeight: FontWeight.w500,
                   ),
                 ),
-                const SizedBox(height: 64),
-                // Syncing label + percentage
+                SizedBox(height: 64.h),
                 Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 40),
+                  padding: EdgeInsets.symmetric(horizontal: 40.w),
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
                       Text(
                         _message,
-                        style: const TextStyle(
-                          color: Color(0xffF9B81F),
-                          fontSize: 13,
+                        style: TextStyle(
+                          color: kButtonsColor,
+                          fontSize: 13.sp,
                           fontWeight: FontWeight.w500,
                         ),
                       ),
                       Text(
                         '${(_currentProgress * 100).toInt()}%',
-                        style: const TextStyle(
-                          color: Color(0xffF9B81F),
-                          fontSize: 13,
+                        style: TextStyle(
+                          color: kButtonsColor,
+                          fontSize: 13.sp,
                           fontWeight: FontWeight.w500,
                         ),
                       ),
                     ],
                   ),
                 ),
-                const SizedBox(height: 12),
-                // Progress bar
+                SizedBox(height: 12.h),
                 Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 40),
+                  padding: EdgeInsets.symmetric(horizontal: 40.w),
                   child: ClipRRect(
-                    borderRadius: BorderRadius.circular(4),
+                    borderRadius: BorderRadius.circular(4.r),
                     child: LinearProgressIndicator(
                       value: _currentProgress,
-                      minHeight: 4,
-                      backgroundColor: const Color(0xff1E293B),
-                      valueColor: const AlwaysStoppedAnimation<Color>(
-                        Color(0xffF9B81F),
-                      ),
+                      minHeight: 4.h,
+                      backgroundColor: kPrimaryColor,
+                      valueColor: AlwaysStoppedAnimation<Color>(kButtonsColor),
                     ),
                   ),
                 ),
-                const SizedBox(height: 24),
-                const Text(
+                SizedBox(height: 24.h),
+                Text(
                   'INITIALIZING CINEMATIC EXPERIENCE...',
                   style: TextStyle(
-                    color: Color(0xff94A3B8),
-                    fontSize: 12,
+                    color: kSlateText,
+                    fontSize: 12.sp,
                     fontWeight: FontWeight.w500,
                   ),
                 ),

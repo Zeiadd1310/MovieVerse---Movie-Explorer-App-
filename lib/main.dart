@@ -23,10 +23,7 @@ class MovieVerseApp extends StatelessWidget {
           brightness: Brightness.dark,
           textTheme: GoogleFonts.interTextTheme(
             Theme.of(context).textTheme,
-          ).apply(
-            bodyColor: Colors.white,
-            displayColor: Colors.white,
-          ),
+          ).apply(bodyColor: Colors.white, displayColor: Colors.white),
         ),
       ),
     );
