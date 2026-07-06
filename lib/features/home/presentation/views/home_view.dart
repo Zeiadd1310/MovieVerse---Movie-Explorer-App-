@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:go_router/go_router.dart';
-import 'package:movie_verse_app/constants.dart';
+import 'package:movie_verse_app/core/constants/constants.dart';
 import 'package:movie_verse_app/core/data/models/movie.dart';
 import 'package:movie_verse_app/core/data/static/static_data.dart';
 import 'package:movie_verse_app/core/utils/functions/app_router.dart';
@@ -119,10 +119,7 @@ class HomeView extends StatelessWidget {
           gradient: LinearGradient(
             begin: Alignment.bottomLeft,
             end: Alignment.topRight,
-            colors: [
-              Colors.black.withValues(alpha: 0.9),
-              Colors.transparent,
-            ],
+            colors: [Colors.black.withValues(alpha: 0.9), Colors.transparent],
           ),
         ),
         child: Column(
@@ -157,7 +154,10 @@ class HomeView extends StatelessWidget {
             Row(
               children: [
                 Container(
-                  padding: EdgeInsets.symmetric(horizontal: 18.w, vertical: 12.h),
+                  padding: EdgeInsets.symmetric(
+                    horizontal: 18.w,
+                    vertical: 12.h,
+                  ),
                   decoration: BoxDecoration(
                     color: kButtonsColor,
                     borderRadius: BorderRadius.circular(30.r),
@@ -295,7 +295,10 @@ class HomeView extends StatelessWidget {
                 SizedBox(height: 5.h),
                 Text(
                   movie.subtitle,
-                  style: TextStyle(color: Colors.grey.shade400, fontSize: 11.sp),
+                  style: TextStyle(
+                    color: Colors.grey.shade400,
+                    fontSize: 11.sp,
+                  ),
                 ),
               ],
             ),
@@ -341,7 +344,10 @@ class HomeView extends StatelessWidget {
                   SizedBox(height: 6.h),
                   Text(
                     movie.genres ?? movie.subtitle,
-                    style: TextStyle(color: Colors.grey.shade400, fontSize: 12.sp),
+                    style: TextStyle(
+                      color: Colors.grey.shade400,
+                      fontSize: 12.sp,
+                    ),
                   ),
                   SizedBox(height: 8.h),
                   Row(

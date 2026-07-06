@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:movie_verse_app/constants.dart';
+import 'package:movie_verse_app/core/constants/constants.dart';
 import 'package:movie_verse_app/core/data/static/static_data.dart';
 import 'package:movie_verse_app/widgets/movie_card.dart';
 import 'package:movie_verse_app/widgets/rating_card.dart';
@@ -130,8 +130,9 @@ class _ReviewPageState extends State<ReviewRatingScreen> {
                   labelStyle: TextStyle(
                     color: isSelected ? Colors.black : Colors.white,
                     fontSize: 12.sp,
-                    fontWeight:
-                        isSelected ? FontWeight.bold : FontWeight.normal,
+                    fontWeight: isSelected
+                        ? FontWeight.bold
+                        : FontWeight.normal,
                   ),
                   selected: isSelected,
                   onSelected: (selected) {

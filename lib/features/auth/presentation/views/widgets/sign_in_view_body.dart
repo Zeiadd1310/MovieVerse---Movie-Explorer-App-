@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:go_router/go_router.dart';
-import 'package:movie_verse_app/constants.dart';
+import 'package:movie_verse_app/core/constants/constants.dart';
 import 'package:movie_verse_app/core/utils/functions/app_router.dart';
 import 'package:movie_verse_app/core/utils/functions/assets.dart';
 import 'package:movie_verse_app/core/widgets/app_text_form_field.dart';
@@ -71,7 +71,9 @@ class SignInViewBody extends StatelessWidget {
                     ),
                     InkWell(
                       onTap: () {
-                        GoRouter.of(context).push(AppRouter.kForgotPasswordView);
+                        GoRouter.of(
+                          context,
+                        ).push(AppRouter.kForgotPasswordView);
                       },
                       child: Text(
                         'Forgot Password?',
@@ -89,17 +91,12 @@ class SignInViewBody extends StatelessWidget {
                   hintText: 'Enter your password',
                   obscureText: true,
                   prefixIcon: Icon(Icons.lock, color: Color(0xff6B7280)),
-                  suffixIcon: Icon(
-                    Icons.visibility,
-                    color: Color(0xff6B7280),
-                  ),
+                  suffixIcon: Icon(Icons.visibility, color: Color(0xff6B7280)),
                 ),
                 SizedBox(height: 20.h),
                 CustomButton(
                   onTap: () {
-                    GoRouter.of(context).pushReplacement(
-                      AppRouter.kMainLayout,
-                    );
+                    GoRouter.of(context).pushReplacement(AppRouter.kMainLayout);
                   },
                   text: 'SIGN IN',
                   width: double.infinity,
@@ -116,10 +113,7 @@ class SignInViewBody extends StatelessWidget {
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     Expanded(
-                      child: Container(
-                        height: 1,
-                        color: Color(0xff475569),
-                      ),
+                      child: Container(height: 1, color: Color(0xff475569)),
                     ),
                     SizedBox(width: 8.w),
                     Text(
@@ -132,10 +126,7 @@ class SignInViewBody extends StatelessWidget {
                     ),
                     SizedBox(width: 8.w),
                     Expanded(
-                      child: Container(
-                        height: 1,
-                        color: Color(0xff475569),
-                      ),
+                      child: Container(height: 1, color: Color(0xff475569)),
                     ),
                   ],
                 ),

@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:movie_verse_app/constants.dart';
+import 'package:movie_verse_app/core/constants/constants.dart';
 import 'package:movie_verse_app/core/data/models/movie.dart';
 import 'package:movie_verse_app/core/data/static/static_data.dart';
 import 'package:movie_verse_app/core/utils/functions/app_router.dart';
@@ -159,9 +159,7 @@ class MovieDetailsView extends StatelessWidget {
         SingleChildScrollView(
           scrollDirection: Axis.horizontal,
           child: Row(
-            children: [
-              for (final member in movie.cast) _castAvatar(member),
-            ],
+            children: [for (final member in movie.cast) _castAvatar(member)],
           ),
         ),
       ],
@@ -264,11 +262,7 @@ class MovieDetailsView extends StatelessWidget {
           child: Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              Icon(
-                Icons.play_arrow_outlined,
-                color: Colors.black,
-                size: 32.sp,
-              ),
+              Icon(Icons.play_arrow_outlined, color: Colors.black, size: 32.sp),
               SizedBox(width: 8.w),
               Text(
                 'Add Review',

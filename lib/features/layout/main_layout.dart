@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:go_router/go_router.dart';
-import 'package:movie_verse_app/constants.dart';
+import 'package:movie_verse_app/core/constants/constants.dart';
 import 'package:movie_verse_app/core/widgets/app_bottom_nav_bar.dart';
 
 class MainLayout extends StatelessWidget {
