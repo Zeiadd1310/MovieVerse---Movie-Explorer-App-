@@ -14,6 +14,8 @@ class CustomButton extends StatelessWidget {
     this.color,
     this.borderColor,
     this.iconSize,
+    this.isLoading = false,
+    this.loadingColor,
   });
 
   final VoidCallback? onTap;
@@ -26,10 +28,13 @@ class CustomButton extends StatelessWidget {
   final Color? color;
   final Color? borderColor;
   final double? iconSize;
+  final bool isLoading;
+  final Color? loadingColor;
+
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
-      onTap: onTap,
+      onTap: isLoading ? null : onTap,
       child: Container(
         width: width,
         height: height,
@@ -42,16 +47,25 @@ class CustomButton extends StatelessWidget {
           ),
         ),
         child: Center(
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              if (icon != null) ...[
-                Icon(icon, color: Colors.white, size: iconSize ?? 20),
-              ],
-              const SizedBox(width: 8),
-              Text(text, style: style),
-            ],
-          ),
+          child: isLoading
+              ? SizedBox(
+                  width: 22,
+                  height: 22,
+                  child: CircularProgressIndicator(
+                    strokeWidth: 2.5,
+                    color: loadingColor ?? Colors.black,
+                  ),
+                )
+              : Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    if (icon != null) ...[
+                      Icon(icon, color: Colors.white, size: iconSize ?? 20),
+                      const SizedBox(width: 8),
+                    ],
+                    Text(text, style: style),
+                  ],
+                ),
         ),
       ),
     );
