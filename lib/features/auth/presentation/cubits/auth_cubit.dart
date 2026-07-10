@@ -38,7 +38,7 @@ class AuthCubit extends Cubit<AuthState> {
     final result = await authRepo.forgotPassword(email: email);
     result.fold(
       (failure) => emit(AuthFailure(failure.errMessage)),
-      (_) => emit(AuthSuccess(FirebaseAuth.instance.currentUser!)),
+      (_) => emit(ForgotPasswordEmailSent()),
     );
   }
 }
