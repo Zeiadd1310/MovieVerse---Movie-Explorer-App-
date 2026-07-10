@@ -17,4 +17,6 @@ abstract class AuthRepo {
   Future<Either<Failure, Unit>> forgotPassword({required String email});
 
   Future<void> signOut();
+
+  User? getCurrentUser();
 }

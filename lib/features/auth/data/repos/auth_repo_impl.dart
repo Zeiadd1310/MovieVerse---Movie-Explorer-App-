@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:dartz/dartz.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:movie_verse_app/core/errors/failures.dart';
@@ -5,6 +6,7 @@ import 'package:movie_verse_app/features/auth/data/repos/auth_repo.dart';
 
 class AuthRepoImpl extends AuthRepo {
   final FirebaseAuth _firebaseAuth = FirebaseAuth.instance;
+  final FirebaseFirestore _firestore = FirebaseFirestore.instance;
 
   @override
   Future<Either<Failure, User>> signUp({
@@ -18,6 +20,14 @@ class AuthRepoImpl extends AuthRepo {
         password: password,
       );
       await credential.user?.updateDisplayName(fullName);
+      await _firestore.collection('users').doc(credential.user!.uid).set({
+        'fullName': fullName,
+        'email': email,
+        'bio': '',
+        'followersCount': 0,
+        'followingCount': 0,
+        'createdAt': FieldValue.serverTimestamp(),
+      });
       return Right(credential.user!);
     } on FirebaseAuthException catch (e) {
       return Left(ServerFailure(_mapSignUpError(e)));
@@ -100,5 +110,10 @@ class AuthRepoImpl extends AuthRepo {
   @override
   Future<void> signOut() async {
     await _firebaseAuth.signOut();
+  }
+
+  @override
+  User? getCurrentUser() {
+    return _firebaseAuth.currentUser;
   }
 }
