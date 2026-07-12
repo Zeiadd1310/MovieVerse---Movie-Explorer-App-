@@ -19,4 +19,6 @@ abstract class AuthRepo {
   Future<void> signOut();
 
   User? getCurrentUser();
+
+  Future<Either<Failure, User>> signInWithGoogle();
 }

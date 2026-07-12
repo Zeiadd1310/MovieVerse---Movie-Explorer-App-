@@ -1,4 +1,3 @@
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:movie_verse_app/features/auth/data/repos/auth_repo.dart';
 import 'package:movie_verse_app/features/auth/presentation/cubits/auth_state.dart';
@@ -39,6 +38,15 @@ class AuthCubit extends Cubit<AuthState> {
     result.fold(
       (failure) => emit(AuthFailure(failure.errMessage)),
       (_) => emit(ForgotPasswordEmailSent()),
+    );
+  }
+
+  Future<void> signInWithGoogle() async {
+    emit(AuthLoading());
+    final result = await authRepo.signInWithGoogle();
+    result.fold(
+      (failure) => emit(AuthFailure(failure.errMessage)),
+      (user) => emit(AuthSuccess(user)),
     );
   }
 }

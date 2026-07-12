@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:movie_verse_app/core/utils/functions/snackbar_helper.dart';
 import 'package:movie_verse_app/core/widgets/app_text_form_field.dart';
 import 'package:movie_verse_app/core/widgets/custom_button.dart';
 import 'package:movie_verse_app/features/auth/presentation/cubits/auth_cubit.dart';
@@ -40,12 +41,7 @@ class _ForgotPasswordViewBodyState extends State<ForgotPasswordViewBody> {
         if (state is ForgotPasswordEmailSent) {
           setState(() => _emailSent = true);
         } else if (state is AuthFailure) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-              content: Text(state.message),
-              backgroundColor: Colors.red.shade400,
-            ),
-          );
+          SnackbarHelper.showError(context, state.message);
         }
       },
       child: AuthScreenLayout(

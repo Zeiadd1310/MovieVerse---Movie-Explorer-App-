@@ -1,12 +1,14 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:dartz/dartz.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:google_sign_in/google_sign_in.dart';
 import 'package:movie_verse_app/core/errors/failures.dart';
 import 'package:movie_verse_app/features/auth/data/repos/auth_repo.dart';
 
 class AuthRepoImpl extends AuthRepo {
   final FirebaseAuth _firebaseAuth = FirebaseAuth.instance;
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
+  final GoogleSignIn _googleSignIn = GoogleSignIn.instance;
 
   @override
   Future<Either<Failure, User>> signUp({
@@ -108,7 +110,53 @@ class AuthRepoImpl extends AuthRepo {
   }
 
   @override
+  Future<Either<Failure, User>> signInWithGoogle() async {
+    try {
+      await _googleSignIn.initialize(
+        serverClientId:
+            '132088818576-k3vu0vosv9ftbqcqf1onn3phpbqdl3ne.apps.googleusercontent.com',
+      );
+
+      final googleUser = await _googleSignIn.authenticate();
+      final googleAuth = googleUser.authentication;
+
+      final credential = GoogleAuthProvider.credential(
+        idToken: googleAuth.idToken,
+      );
+
+      final userCredential = await _firebaseAuth.signInWithCredential(
+        credential,
+      );
+      final user = userCredential.user!;
+
+      final isNewUser = userCredential.additionalUserInfo?.isNewUser ?? false;
+      if (isNewUser) {
+        await _firestore.collection('users').doc(user.uid).set({
+          'fullName': user.displayName ?? '',
+          'email': user.email ?? '',
+          'bio': '',
+          'followersCount': 0,
+          'followingCount': 0,
+          'createdAt': FieldValue.serverTimestamp(),
+        });
+      }
+
+      return Right(user);
+    } on GoogleSignInException catch (e) {
+      if (e.code == GoogleSignInExceptionCode.canceled) {
+        return Left(ServerFailure('Sign in cancelled'));
+      }
+      return Left(ServerFailure(e.description ?? 'Google sign in failed'));
+    } on FirebaseAuthException catch (e) {
+      return Left(ServerFailure(e.message ?? 'Google sign in failed'));
+    } catch (e) {
+      return Left(ServerFailure(e.toString()));
+    }
+  }
+
+  @override
   Future<void> signOut() async {
+    await _googleSignIn.signOut();
     await _firebaseAuth.signOut();
   }
 

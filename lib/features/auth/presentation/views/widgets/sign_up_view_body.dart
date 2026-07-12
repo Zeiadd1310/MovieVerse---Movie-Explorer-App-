@@ -5,6 +5,7 @@ import 'package:go_router/go_router.dart';
 import 'package:movie_verse_app/core/constants/constants.dart';
 import 'package:movie_verse_app/core/utils/functions/app_router.dart';
 import 'package:movie_verse_app/core/utils/functions/assets.dart';
+import 'package:movie_verse_app/core/utils/functions/snackbar_helper.dart';
 import 'package:movie_verse_app/core/widgets/app_text_form_field.dart';
 import 'package:movie_verse_app/core/widgets/custom_button.dart';
 import 'package:movie_verse_app/features/auth/presentation/cubits/auth_cubit.dart';
@@ -52,12 +53,7 @@ class _SignUpViewBodyState extends State<SignUpViewBody> {
             context,
           ).go(AppRouter.kMainLayout); // adjust to your actual home route
         } else if (state is AuthFailure) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-              content: Text(state.message),
-              backgroundColor: Colors.red.shade400,
-            ),
-          );
+          SnackbarHelper.showError(context, state.message);
         }
       },
       child: AuthScreenLayout(
@@ -251,21 +247,31 @@ class _SignUpViewBodyState extends State<SignUpViewBody> {
                       Row(
                         children: [
                           Expanded(
-                            child: CustomButton(
-                              icon: Icons.g_mobiledata,
-                              text: 'Google',
-                              width: double.infinity,
-                              height: 50.h,
-                              style: TextStyle(
-                                fontSize: 14.sp,
-                                fontWeight: FontWeight.w500,
-                                color: Colors.white,
-                              ),
-                              radius: 16.r,
-                              color: kPrimaryColor,
-                              borderColor: const Color(
-                                0xffF1F5F9,
-                              ).withOpacity(0.1),
+                            child: BlocBuilder<AuthCubit, AuthState>(
+                              builder: (context, state) {
+                                final isLoading = state is AuthLoading;
+                                return CustomButton(
+                                  icon: Icons.g_mobiledata,
+                                  iconSize: 28,
+                                  text: 'Google',
+                                  width: double.infinity,
+                                  height: 50.h,
+                                  style: TextStyle(
+                                    fontSize: 18.sp,
+                                    fontWeight: FontWeight.w500,
+                                    color: Colors.white,
+                                  ),
+                                  radius: 16.r,
+                                  color: kPrimaryColor,
+                                  borderColor: const Color(
+                                    0xffF1F5F9,
+                                  ).withOpacity(0.1),
+                                  isLoading: isLoading,
+                                  onTap: () => context
+                                      .read<AuthCubit>()
+                                      .signInWithGoogle(),
+                                );
+                              },
                             ),
                           ),
                           SizedBox(width: 16.w),
