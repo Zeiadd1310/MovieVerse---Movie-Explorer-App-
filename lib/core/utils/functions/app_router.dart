@@ -1,3 +1,4 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:go_router/go_router.dart';
 import 'package:movie_verse_app/features/auth/presentation/views/forgot_password_view.dart';
 import 'package:movie_verse_app/features/auth/presentation/views/sign_in_view.dart';
@@ -24,6 +25,27 @@ abstract class AppRouter {
       '${movieDetailsPath(movieId)}/review';
 
   static final router = GoRouter(
+    initialLocation: kSplashView,
+    redirect: (context, state) {
+      final isLoggedIn = FirebaseAuth.instance.currentUser != null;
+      final isSplash = state.matchedLocation == kSplashView;
+      final isAuthRoute =
+          state.matchedLocation == kSignInView ||
+          state.matchedLocation == kSignUpView ||
+          state.matchedLocation == kForgotPasswordView;
+
+      if (isSplash) return null; // let Splash run its own logic uninterrupted
+
+      if (!isLoggedIn && !isAuthRoute) {
+        return kSignInView;
+      }
+
+      if (isLoggedIn && isAuthRoute) {
+        return kMainLayout;
+      }
+
+      return null;
+    },
     routes: [
       GoRoute(
         path: kSplashView,

@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">MovieVerse</string>
+    <string name="facebook_app_id">4434165060160580</string>
+    <string name="fb_login_protocol_scheme">fb4434165060160580</string>
+    <string name="facebook_client_token">22248e43a1272f27b8f2027228d33748</string>
+</resources>

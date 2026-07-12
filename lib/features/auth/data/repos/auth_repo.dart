@@ -21,4 +21,6 @@ abstract class AuthRepo {
   User? getCurrentUser();
 
   Future<Either<Failure, User>> signInWithGoogle();
+
+  Future<Either<Failure, User>> signInWithFacebook();
 }

@@ -253,22 +253,31 @@ class _SignInViewBodyState extends State<SignInViewBody> {
                         ),
                         SizedBox(width: 16.w),
                         Expanded(
-                          child: CustomButton(
-                            text: 'Facebook',
-                            width: double.infinity,
-                            height: 50.h,
-                            style: TextStyle(
-                              fontSize: 18.sp,
-                              fontWeight: FontWeight.w500,
-                              color: Colors.white,
-                            ),
-                            radius: 16.r,
-                            icon: Icons.facebook,
-                            iconSize: 25,
-                            color: kPrimaryColor,
-                            borderColor: const Color(
-                              0xffF1F5F9,
-                            ).withOpacity(0.1),
+                          child: BlocBuilder<AuthCubit, AuthState>(
+                            builder: (context, state) {
+                              final isLoading = state is AuthLoading;
+                              return CustomButton(
+                                text: 'Facebook',
+                                width: double.infinity,
+                                height: 50.h,
+                                style: TextStyle(
+                                  fontSize: 18.sp,
+                                  fontWeight: FontWeight.w500,
+                                  color: Colors.white,
+                                ),
+                                radius: 16.r,
+                                icon: Icons.facebook,
+                                iconSize: 25,
+                                color: kPrimaryColor,
+                                borderColor: const Color(
+                                  0xffF1F5F9,
+                                ).withOpacity(0.1),
+                                isLoading: isLoading,
+                                onTap: () => context
+                                    .read<AuthCubit>()
+                                    .signInWithFacebook(),
+                              );
+                            },
                           ),
                         ),
                       ],
