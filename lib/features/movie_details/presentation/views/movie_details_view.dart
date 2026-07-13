@@ -3,7 +3,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:movie_verse_app/core/constants/constants.dart';
-import 'package:movie_verse_app/core/data/models/movie.dart';
+import 'package:movie_verse_app/features/search/data/models/movie.dart';
 import 'package:movie_verse_app/core/data/static/static_data.dart';
 import 'package:movie_verse_app/core/utils/functions/app_router.dart';
 

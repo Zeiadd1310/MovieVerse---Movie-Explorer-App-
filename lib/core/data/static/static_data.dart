@@ -1,4 +1,4 @@
-import 'package:movie_verse_app/core/data/models/movie.dart';
+import 'package:movie_verse_app/features/search/data/models/movie.dart';
 
 /// Static placeholder data — replace with API + Cubit later.
 abstract final class StaticData {

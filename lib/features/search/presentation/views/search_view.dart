@@ -7,6 +7,7 @@ import 'package:movie_verse_app/core/utils/functions/app_router.dart';
 import 'package:movie_verse_app/features/search/presentation/cubits/search_cubit.dart';
 import 'package:movie_verse_app/features/search/presentation/cubits/search_state.dart';
 import 'package:movie_verse_app/features/home/data/models/movie_model.dart';
+
 class SearchView extends StatelessWidget {
   const SearchView({super.key});
 
@@ -18,9 +19,7 @@ class SearchView extends StatelessWidget {
         child: BlocBuilder<SearchCubit, SearchState>(
           builder: (context, state) {
             if (state is SearchInitial || state is SearchLoading) {
-              return const Center(
-                child: CircularProgressIndicator(),
-              );
+              return const Center(child: CircularProgressIndicator());
             }
 
             if (state is SearchFailure) {
@@ -54,13 +53,14 @@ class SearchView extends StatelessWidget {
                     ),
                     SizedBox(height: 25.h),
                     Container(
-                      height: 55.h,
+                      height: 50.h,
                       decoration: BoxDecoration(
                         color: const Color(0xff151C2C),
                         borderRadius: BorderRadius.circular(30.r),
                       ),
                       child: TextField(
-                        onChanged: (value) => context.read<SearchCubit>().searchMovies(value),
+                        onChanged: (value) =>
+                            context.read<SearchCubit>().searchMovies(value),
                         style: TextStyle(color: Colors.white, fontSize: 14.sp),
                         decoration: InputDecoration(
                           border: InputBorder.none,
@@ -70,7 +70,10 @@ class SearchView extends StatelessWidget {
                             size: 22.sp,
                           ),
                           hintText: 'Search movies...',
-                          hintStyle: TextStyle(color: Colors.grey, fontSize: 14.sp),
+                          hintStyle: TextStyle(
+                            color: Colors.grey,
+                            fontSize: 14.sp,
+                          ),
                         ),
                       ),
                     ),
@@ -90,10 +93,13 @@ class SearchView extends StatelessWidget {
                         children: [
                           for (final title in state.trendingSearches)
                             GestureDetector(
-                              onTap: () => context.read<SearchCubit>().searchMovies(title),
+                              onTap: () => context
+                                  .read<SearchCubit>()
+                                  .searchMovies(title),
                               child: _searchChip(
                                 title,
-                                title.toLowerCase() == state.query.toLowerCase(),
+                                title.toLowerCase() ==
+                                    state.query.toLowerCase(),
                               ),
                             ),
                         ],
@@ -126,22 +132,23 @@ class SearchView extends StatelessWidget {
                       child: state.isSearching
                           ? const Center(child: CircularProgressIndicator())
                           : state.searchResults.isEmpty
-                              ? state.query.isEmpty
-                                  ? const SizedBox()
-                                  : _buildNoResults()
-                              : GridView.builder(
-                                  gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                          ? state.query.isEmpty
+                                ? const SizedBox()
+                                : _buildNoResults()
+                          : GridView.builder(
+                              gridDelegate:
+                                  SliverGridDelegateWithFixedCrossAxisCount(
                                     crossAxisCount: 2,
                                     crossAxisSpacing: 16.w,
                                     mainAxisSpacing: 20.h,
                                     childAspectRatio: 0.58,
                                   ),
-                                  itemCount: state.searchResults.length,
-                                  itemBuilder: (_, index) => _movieCard(
-                                    context,
-                                    state.searchResults[index],
-                                  ),
-                                ),
+                              itemCount: state.searchResults.length,
+                              itemBuilder: (_, index) => _movieCard(
+                                context,
+                                state.searchResults[index],
+                              ),
+                            ),
                     ),
                   ],
                 ),
@@ -175,10 +182,7 @@ class SearchView extends StatelessWidget {
             Text(
               message,
               textAlign: TextAlign.center,
-              style: TextStyle(
-                color: Colors.grey.shade400,
-                fontSize: 14.sp,
-              ),
+              style: TextStyle(color: Colors.grey.shade400, fontSize: 14.sp),
             ),
             SizedBox(height: 24.h),
             GestureDetector(
@@ -209,10 +213,7 @@ class SearchView extends StatelessWidget {
     return Center(
       child: Text(
         'No movies found',
-        style: TextStyle(
-          color: Colors.grey.shade400,
-          fontSize: 16.sp,
-        ),
+        style: TextStyle(color: Colors.grey.shade400, fontSize: 16.sp),
       ),
     );
   }
@@ -237,9 +238,12 @@ class SearchView extends StatelessWidget {
   }
 
   Widget _movieCard(BuildContext context, MovieModel movie) {
-    final releaseYear = movie.releaseDate.length >= 4 ? movie.releaseDate.substring(0, 4) : movie.releaseDate;
+    final releaseYear = movie.releaseDate.length >= 4
+        ? movie.releaseDate.substring(0, 4)
+        : movie.releaseDate;
     return GestureDetector(
-      onTap: () => context.push(AppRouter.movieDetailsPath(movie.id.toString())),
+      onTap: () =>
+          context.push(AppRouter.movieDetailsPath(movie.id.toString())),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -251,21 +255,28 @@ class SearchView extends StatelessWidget {
                     borderRadius: BorderRadius.circular(24.r),
                     image: movie.posterPath.isNotEmpty
                         ? DecorationImage(
-                            image: NetworkImage('https://image.tmdb.org/t/p/w500${movie.posterPath}'),
+                            image: NetworkImage(
+                              'https://image.tmdb.org/t/p/w500${movie.posterPath}',
+                            ),
                             fit: BoxFit.cover,
                           )
                         : null,
                     color: movie.posterPath.isNotEmpty ? null : Colors.grey,
                   ),
                   child: movie.posterPath.isEmpty
-                      ? const Center(child: Icon(Icons.movie, color: Colors.white))
+                      ? const Center(
+                          child: Icon(Icons.movie, color: Colors.white),
+                        )
                       : null,
                 ),
                 Positioned(
                   top: 10.h,
                   right: 10.w,
                   child: Container(
-                    padding: EdgeInsets.symmetric(horizontal: 8.w, vertical: 5.h),
+                    padding: EdgeInsets.symmetric(
+                      horizontal: 8.w,
+                      vertical: 5.h,
+                    ),
                     decoration: BoxDecoration(
                       color: const Color(0xff1A1A1A),
                       borderRadius: BorderRadius.circular(20.r),
