@@ -12,7 +12,11 @@ import 'package:movie_verse_app/features/home/presentation/views/home_view.dart'
 import 'package:movie_verse_app/features/layout/main_layout.dart';
 import 'package:movie_verse_app/features/movie_details/presentation/views/movie_details_view.dart';
 import 'package:movie_verse_app/features/movie_details/presentation/views/review_rating_screen.dart';
+import 'package:movie_verse_app/features/search/data/repos/search_repo_impl.dart';
+import 'package:movie_verse_app/features/search/presentation/cubits/search_cubit.dart';
 import 'package:movie_verse_app/features/search/presentation/views/search_view.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:movie_verse_app/core/utils/functions/api_service.dart';
 
 abstract class AppRouter {
   static const kSplashView = '/';
@@ -112,7 +116,14 @@ abstract class AppRouter {
             routes: [
               GoRoute(
                 path: kExplore,
-                builder: (context, state) => const SearchView(),
+                builder: (context, state) => BlocProvider(
+                  create: (context) => SearchCubit(
+                    SearchRepoImpl(
+                      ApiService(),
+                    ),
+                  )..loadSearchData(),
+                  child: const SearchView(),
+                ),
               ),
             ],
           ),
