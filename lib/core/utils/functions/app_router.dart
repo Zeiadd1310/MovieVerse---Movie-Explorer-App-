@@ -15,8 +15,6 @@ import 'package:movie_verse_app/features/movie_details/presentation/views/review
 import 'package:movie_verse_app/features/search/data/repos/search_repo_impl.dart';
 import 'package:movie_verse_app/features/search/presentation/cubits/search_cubit.dart';
 import 'package:movie_verse_app/features/search/presentation/views/search_view.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:movie_verse_app/core/utils/functions/api_service.dart';
 
 abstract class AppRouter {
   static const kSplashView = '/';
@@ -87,23 +85,18 @@ abstract class AppRouter {
               GoRoute(
                 path: kMainLayout,
                 builder: (context, state) => BlocProvider(
-                  create: (context) => HomeCubit(
-                    HomeRepoImpl(
-                      ApiService(),
-                    ),
-                  )..getPopularMovies(),
+                  create: (context) =>
+                      HomeCubit(HomeRepoImpl(ApiService()))..getPopularMovies(),
                   child: const HomeView(),
                 ),
                 routes: [
                   GoRoute(
                     path: 'movie/:movieId',
-                    builder: (context, state) =>
-                        const MovieDetailsView(),
+                    builder: (context, state) => const MovieDetailsView(),
                     routes: [
                       GoRoute(
                         path: 'review',
-                        builder: (context, state) =>
-                            const ReviewRatingScreen(),
+                        builder: (context, state) => const ReviewRatingScreen(),
                       ),
                     ],
                   ),
@@ -117,11 +110,9 @@ abstract class AppRouter {
               GoRoute(
                 path: kExplore,
                 builder: (context, state) => BlocProvider(
-                  create: (context) => SearchCubit(
-                    SearchRepoImpl(
-                      ApiService(),
-                    ),
-                  )..loadSearchData(),
+                  create: (context) =>
+                      SearchCubit(SearchRepoImpl(ApiService()))
+                        ..loadSearchData(),
                   child: const SearchView(),
                 ),
               ),

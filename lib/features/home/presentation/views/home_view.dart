@@ -1,17 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:go_router/go_router.dart';
 import 'package:movie_verse_app/core/constants/constants.dart';
-<<<<<<< HEAD
-import 'package:movie_verse_app/features/search/data/models/movie.dart';
-import 'package:movie_verse_app/core/data/static/static_data.dart';
-=======
->>>>>>> f8ceff5118a54299d589b9852b9a5584760ba91d
 import 'package:movie_verse_app/core/utils/functions/app_router.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:movie_verse_app/features/home/data/models/movie_model.dart';
 import 'package:movie_verse_app/features/home/presentation/cubits/home_cubit.dart';
 import 'package:movie_verse_app/features/home/presentation/cubits/home_state.dart';
-import 'package:movie_verse_app/features/home/data/models/movie_model.dart';
 
 class HomeView extends StatelessWidget {
   const HomeView({super.key});
@@ -24,9 +19,7 @@ class HomeView extends StatelessWidget {
         child: BlocBuilder<HomeCubit, HomeState>(
           builder: (context, state) {
             if (state is HomeLoading || state is HomeInitial) {
-              return const Center(
-                child: CircularProgressIndicator(),
-              );
+              return const Center(child: CircularProgressIndicator());
             }
 
             if (state is HomeFailure) {
@@ -41,7 +34,10 @@ class HomeView extends StatelessWidget {
             if (state is HomeSuccess) {
               return SingleChildScrollView(
                 child: Padding(
-                  padding: EdgeInsets.symmetric(horizontal: 18.w, vertical: 14.h),
+                  padding: EdgeInsets.symmetric(
+                    horizontal: 18.w,
+                    vertical: 14.h,
+                  ),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
@@ -50,7 +46,11 @@ class HomeView extends StatelessWidget {
                         children: [
                           Row(
                             children: [
-                              Icon(Icons.movie, color: kButtonsColor, size: 20.sp),
+                              Icon(
+                                Icons.movie,
+                                color: kButtonsColor,
+                                size: 20.sp,
+                              ),
                               SizedBox(width: 8.w),
                               Text(
                                 'MovieExplorer',
@@ -85,7 +85,9 @@ class HomeView extends StatelessWidget {
                           children: [
                             for (final genre in state.genres)
                               GestureDetector(
-                                onTap: () => context.read<HomeCubit>().selectGenre(genre.id),
+                                onTap: () => context
+                                    .read<HomeCubit>()
+                                    .selectGenre(genre.id),
                                 child: _categoryItem(
                                   genre.name,
                                   genre.id == state.selectedGenreId,
@@ -103,9 +105,12 @@ class HomeView extends StatelessWidget {
                           scrollDirection: Axis.horizontal,
                           itemCount: state.trendingMovies.length,
                           separatorBuilder: (_, index) => SizedBox(width: 15.w),
-                          itemBuilder: (_, index) => _trendingCardApi(state.trendingMovies[index]),
+                          itemBuilder: (_, index) =>
+                              _trendingCardApi(state.trendingMovies[index]),
                         ),
                       ),
+                      SizedBox(height: 18.h),
+
                       _sectionTitle('Popular Movies'),
                       SizedBox(height: 18.h),
                       Column(
@@ -173,10 +178,7 @@ class HomeView extends StatelessWidget {
       width: double.infinity,
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(28.r),
-        image: DecorationImage(
-          image: imageProvider,
-          fit: BoxFit.cover,
-        ),
+        image: DecorationImage(image: imageProvider, fit: BoxFit.cover),
       ),
       child: Container(
         padding: EdgeInsets.all(20.r),
@@ -217,53 +219,32 @@ class HomeView extends StatelessWidget {
               ),
             ),
             SizedBox(height: 14.h),
-            Row(
-              children: [
-                GestureDetector(
-                  onTap: () => context.push(
-                    AppRouter.movieDetailsPath(featuredMovie.id.toString()),
-                  ),
-                  child: Container(
-                    padding: EdgeInsets.symmetric(
-                      horizontal: 18.w,
-                      vertical: 12.h,
-                    ),
-                    decoration: BoxDecoration(
-                      color: kButtonsColor,
-                      borderRadius: BorderRadius.circular(30.r),
-                    ),
-                    child: Row(
-                      children: [
-                        Icon(Icons.play_arrow, color: Colors.black, size: 18.sp),
-                        SizedBox(width: 5.w),
-                        Text(
-                          'Watch Now',
-                          style: TextStyle(
-                            color: Colors.black,
-                            fontWeight: FontWeight.w600,
-                            fontSize: 14.sp,
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
+            GestureDetector(
+              onTap: () => context.push(
+                AppRouter.movieDetailsPath(featuredMovie.id.toString()),
+              ),
+              child: Container(
+                width: 155.w,
+                padding: EdgeInsets.symmetric(horizontal: 18.w, vertical: 12.h),
+                decoration: BoxDecoration(
+                  color: kButtonsColor,
+                  borderRadius: BorderRadius.circular(30.r),
                 ),
-                SizedBox(width: 12.w),
-                GestureDetector(
-                  onTap: () {
-                    // TODO: connect plus button to favorites/watchlist logic if available.
-                  },
-                  child: Container(
-                    height: 44.r,
-                    width: 44.r,
-                    decoration: BoxDecoration(
-                      color: Colors.white.withOpacity(0.2),
-                      shape: BoxShape.circle,
+                child: Row(
+                  children: [
+                    Icon(Icons.play_arrow, color: Colors.black, size: 18.sp),
+                    SizedBox(width: 5.w),
+                    Text(
+                      'Watch Now',
+                      style: TextStyle(
+                        color: Colors.black,
+                        fontWeight: FontWeight.w600,
+                        fontSize: 14.sp,
+                      ),
                     ),
-                    child: Icon(Icons.add, color: Colors.white, size: 20.sp),
-                  ),
+                  ],
                 ),
-              ],
+              ),
             ),
           ],
         ),
@@ -272,26 +253,13 @@ class HomeView extends StatelessWidget {
   }
 
   Widget _sectionTitle(String text) {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-      children: [
-        Text(
-          text,
-          style: TextStyle(
-            color: Colors.white,
-            fontSize: 18.sp,
-            fontWeight: FontWeight.w700,
-          ),
-        ),
-        Text(
-          'See all',
-          style: TextStyle(
-            color: kButtonsColor,
-            fontSize: 12.sp,
-            fontWeight: FontWeight.w500,
-          ),
-        ),
-      ],
+    return Text(
+      text,
+      style: TextStyle(
+        color: Colors.white,
+        fontSize: 18.sp,
+        fontWeight: FontWeight.w700,
+      ),
     );
   }
 
@@ -315,7 +283,9 @@ class HomeView extends StatelessWidget {
   }
 
   Widget _trendingCardApi(MovieModel movie) {
-    final releaseYear = movie.releaseDate.length >= 4 ? movie.releaseDate.substring(0, 4) : movie.releaseDate;
+    final releaseYear = movie.releaseDate.length >= 4
+        ? movie.releaseDate.substring(0, 4)
+        : movie.releaseDate;
     return Container(
       width: 150.w,
       decoration: BoxDecoration(
@@ -368,6 +338,8 @@ class HomeView extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
                   movie.title,
                   style: TextStyle(
                     color: Colors.white,
@@ -393,11 +365,14 @@ class HomeView extends StatelessWidget {
     );
   }
 
-  Widget _popularMovieTileApi(BuildContext context, MovieModel movie, bool isFavorite) {
+  Widget _popularMovieTileApi(
+    BuildContext context,
+    MovieModel movie,
+    bool isFavorite,
+  ) {
     return GestureDetector(
-      onTap: () => context.push(
-        AppRouter.movieDetailsPath(movie.id.toString()),
-      ),
+      onTap: () =>
+          context.push(AppRouter.movieDetailsPath(movie.id.toString())),
       child: Container(
         padding: EdgeInsets.all(12.r),
         decoration: BoxDecoration(
@@ -439,25 +414,16 @@ class HomeView extends StatelessWidget {
                   SizedBox(height: 6.h),
                   Text(
                     movie.releaseDate,
-                    style: TextStyle(
-                      color: Colors.grey,
-                      fontSize: 12.sp,
-                    ),
+                    style: TextStyle(color: Colors.grey, fontSize: 12.sp),
                   ),
                   SizedBox(height: 8.h),
                   Row(
                     children: [
-                      Icon(
-                        Icons.star,
-                        color: kButtonsColor,
-                        size: 16.sp,
-                      ),
+                      Icon(Icons.star, color: kButtonsColor, size: 16.sp),
                       SizedBox(width: 4.w),
                       Text(
                         movie.voteAverage.toStringAsFixed(1),
-                        style: const TextStyle(
-                          color: Colors.white,
-                        ),
+                        style: const TextStyle(color: Colors.white),
                       ),
                     ],
                   ),
