@@ -1,9 +1,13 @@
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
+import 'package:movie_verse_app/core/utils/functions/api_service.dart';
 import 'package:movie_verse_app/features/auth/presentation/views/forgot_password_view.dart';
 import 'package:movie_verse_app/features/auth/presentation/views/sign_in_view.dart';
 import 'package:movie_verse_app/features/auth/presentation/views/sign_up_view.dart';
 import 'package:movie_verse_app/features/auth/presentation/views/splash_view.dart';
+import 'package:movie_verse_app/features/home/data/repos/home_repo_impl.dart';
+import 'package:movie_verse_app/features/home/presentation/cubits/home_cubit.dart';
 import 'package:movie_verse_app/features/home/presentation/views/home_view.dart';
 import 'package:movie_verse_app/features/layout/main_layout.dart';
 import 'package:movie_verse_app/features/movie_details/presentation/views/movie_details_view.dart';
@@ -23,8 +27,10 @@ abstract class AppRouter {
   static const kExplore = '/explore';
   static const kWatchlist = '/watchlist';
   static const kProfile = '/profile';
+
   static String movieDetailsPath([String movieId = 'interstellar']) =>
       '$kMainLayout/movie/$movieId';
+
   static String reviewRatingPath([String movieId = 'interstellar']) =>
       '${movieDetailsPath(movieId)}/review';
 
@@ -58,19 +64,16 @@ abstract class AppRouter {
 
       GoRoute(
         path: kSignUpView,
-
         builder: (context, state) => const SignUpView(),
       ),
 
       GoRoute(
         path: kSignInView,
-
         builder: (context, state) => const SignInView(),
       ),
 
       GoRoute(
         path: kForgotPasswordView,
-
         builder: (context, state) => const ForgotPasswordView(),
       ),
 
@@ -78,26 +81,29 @@ abstract class AppRouter {
         builder: (context, state, navigationShell) {
           return MainLayout(navigationShell: navigationShell);
         },
-
         branches: [
           StatefulShellBranch(
             routes: [
               GoRoute(
                 path: kMainLayout,
-
-                builder: (context, state) => const HomeView(),
-
+                builder: (context, state) => BlocProvider(
+                  create: (context) => HomeCubit(
+                    HomeRepoImpl(
+                      ApiService(),
+                    ),
+                  )..getPopularMovies(),
+                  child: const HomeView(),
+                ),
                 routes: [
                   GoRoute(
                     path: 'movie/:movieId',
-
-                    builder: (context, state) => const MovieDetailsView(),
-
+                    builder: (context, state) =>
+                        const MovieDetailsView(),
                     routes: [
                       GoRoute(
                         path: 'review',
-
-                        builder: (context, state) => const ReviewRatingScreen(),
+                        builder: (context, state) =>
+                            const ReviewRatingScreen(),
                       ),
                     ],
                   ),
@@ -126,7 +132,6 @@ abstract class AppRouter {
             routes: [
               GoRoute(
                 path: kWatchlist,
-
                 builder: (context, state) =>
                     const TabPlaceholder(title: 'Watchlist'),
               ),
@@ -137,7 +142,6 @@ abstract class AppRouter {
             routes: [
               GoRoute(
                 path: kProfile,
-
                 builder: (context, state) =>
                     const TabPlaceholder(title: 'Profile'),
               ),
