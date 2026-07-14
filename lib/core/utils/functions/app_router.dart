@@ -2,6 +2,8 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:movie_verse_app/core/utils/functions/api_service.dart';
+import 'package:movie_verse_app/core/utils/functions/app_flow.dart';
+import 'package:movie_verse_app/core/utils/functions/go_router_refresh_stream.dart';
 import 'package:movie_verse_app/features/auth/presentation/views/forgot_password_view.dart';
 import 'package:movie_verse_app/features/auth/presentation/views/sign_in_view.dart';
 import 'package:movie_verse_app/features/auth/presentation/views/sign_up_view.dart';
@@ -32,20 +34,28 @@ abstract class AppRouter {
   static String reviewRatingPath([String movieId = 'interstellar']) =>
       '${movieDetailsPath(movieId)}/review';
 
+  static final _authRefresh =
+      GoRouterRefreshStream(FirebaseAuth.instance.authStateChanges());
+
+  static bool _isAuthRoute(String location) {
+    return location == kSignInView ||
+        location == kSignUpView ||
+        location == kForgotPasswordView;
+  }
+
   static final router = GoRouter(
     initialLocation: kSplashView,
-    redirect: (context, state) {
+    refreshListenable: _authRefresh,
+    redirect: (context, state) async {
       final isLoggedIn = FirebaseAuth.instance.currentUser != null;
-      final isSplash = state.matchedLocation == kSplashView;
-      final isAuthRoute =
-          state.matchedLocation == kSignInView ||
-          state.matchedLocation == kSignUpView ||
-          state.matchedLocation == kForgotPasswordView;
+      final location = state.matchedLocation;
+      final isSplash = location == kSplashView;
+      final isAuthRoute = _isAuthRoute(location);
 
-      if (isSplash) return null; // let Splash run its own logic uninterrupted
+      if (isSplash) return null;
 
       if (!isLoggedIn && !isAuthRoute) {
-        return kSignInView;
+        return AppFlow.unauthenticatedDestination();
       }
 
       if (isLoggedIn && isAuthRoute) {

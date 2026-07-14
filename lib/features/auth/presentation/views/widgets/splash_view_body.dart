@@ -1,11 +1,11 @@
 import 'dart:math';
 
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:go_router/go_router.dart';
 import 'package:movie_verse_app/core/constants/constants.dart';
-import 'package:movie_verse_app/core/utils/functions/app_router.dart';
+import 'package:movie_verse_app/core/utils/functions/app_flow.dart';
+import 'package:movie_verse_app/core/utils/functions/app_preferences.dart';
 import 'package:movie_verse_app/core/utils/functions/assets.dart';
 
 class SplashViewBody extends StatefulWidget {
@@ -76,12 +76,11 @@ class _SplashViewBodyState extends State<SplashViewBody>
     await Future.delayed(const Duration(milliseconds: 400));
     if (!mounted) return;
 
-    final currentUser = FirebaseAuth.instance.currentUser;
-    if (currentUser != null) {
-      context.go(AppRouter.kMainLayout);
-    } else {
-      context.go(AppRouter.kSignInView);
-    }
+    final destination = await AppFlow.postSplashDestination();
+    await AppPreferences.markLaunched();
+    if (!mounted) return;
+
+    context.go(destination);
   }
 
   @override

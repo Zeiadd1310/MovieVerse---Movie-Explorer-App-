@@ -46,7 +46,7 @@ class _SignInViewBodyState extends State<SignInViewBody> {
     return BlocListener<AuthCubit, AuthState>(
       listener: (context, state) {
         if (state is AuthSuccess) {
-          GoRouter.of(context).pushReplacement(AppRouter.kMainLayout);
+          GoRouter.of(context).go(AppRouter.kMainLayout);
         } else if (state is AuthFailure) {
           SnackbarHelper.showError(context, state.message);
         }
@@ -303,7 +303,7 @@ class _SignInViewBodyState extends State<SignInViewBody> {
                     onTap: () {
                       GoRouter.of(
                         context,
-                      ).pushReplacement(AppRouter.kSignUpView);
+                      ).go(AppRouter.kSignUpView);
                     },
                     child: Text(
                       'Sign Up',
