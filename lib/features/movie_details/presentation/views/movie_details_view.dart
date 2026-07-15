@@ -9,8 +9,6 @@ import 'package:movie_verse_app/features/movie_details/data/models/movie_details
 import 'package:movie_verse_app/features/movie_details/data/repos/movie_details_repo_imp.dart';
 import 'package:movie_verse_app/features/movie_details/presentation/cubits/movie_details_cubit.dart';
 import 'package:movie_verse_app/features/movie_details/presentation/cubits/movie_details_state.dart';
-import 'package:movie_verse_app/features/search/data/models/movie.dart';
-import 'package:movie_verse_app/core/data/static/static_data.dart';
 import 'package:movie_verse_app/core/utils/functions/app_router.dart';
 
 class MovieDetailsView extends StatelessWidget {
@@ -20,11 +18,6 @@ class MovieDetailsView extends StatelessWidget {
   Widget build(BuildContext context) {
     final movieIdParam = GoRouterState.of(context).pathParameters['movieId'];
     final movieId = int.tryParse(movieIdParam ?? '') ?? 0;
-
-    // Cast section is still using static data until cast integration is wired up.
-    final staticMovie = StaticData.movieById(
-      movieIdParam ?? StaticData.interstellar.id,
-    );
 
     return BlocProvider(
       create: (context) => MovieDetailsCubit(
@@ -56,7 +49,10 @@ class MovieDetailsView extends StatelessWidget {
               );
             }
 
-            final movie = (state as MovieDetailsSuccess).movieDetailsModel;
+            final successState = state as MovieDetailsSuccess;
+            final movie = successState.movieDetailsModel;
+            final isFavorite = successState.isFavorite;
+            final isBookmarked = successState.isBookmarked;
 
             return Stack(
               children: [
@@ -64,7 +60,7 @@ class MovieDetailsView extends StatelessWidget {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      _buildHeader(context, movie),
+                      _buildHeader(context, movie, isFavorite, isBookmarked),
                       Padding(
                         padding: EdgeInsets.symmetric(horizontal: 20.w),
                         child: Column(
@@ -112,7 +108,7 @@ class MovieDetailsView extends StatelessWidget {
                               ),
                             ),
                             SizedBox(height: 35.h),
-                            _buildCastSection(staticMovie),
+                            _buildCastSection(movie),
                             SizedBox(height: 140.h),
                           ],
                         ),
@@ -129,7 +125,12 @@ class MovieDetailsView extends StatelessWidget {
     );
   }
 
-  Widget _buildHeader(BuildContext context, MovieDetailsModel movie) {
+  Widget _buildHeader(
+    BuildContext context,
+    MovieDetailsModel movie,
+    bool isFavorite,
+    bool isBookmarked,
+  ) {
     return Stack(
       children: [
         Image.network(
@@ -166,7 +167,17 @@ class MovieDetailsView extends StatelessWidget {
               _circleIcon(Icons.arrow_back, onTap: () => context.pop()),
               Row(
                 children: [
-                  _circleIcon(Icons.favorite_border),
+                  _circleIcon(
+                    isFavorite ? Icons.favorite : Icons.favorite_border,
+                    onTap: () =>
+                        context.read<MovieDetailsCubit>().toggleFavorite(),
+                  ),
+                  SizedBox(width: 15.w),
+                  _circleIcon(
+                    isBookmarked ? Icons.bookmark : Icons.bookmark_border,
+                    onTap: () =>
+                        context.read<MovieDetailsCubit>().toggleBookmark(),
+                  ),
                   SizedBox(width: 15.w),
                   _circleIcon(Icons.share_outlined),
                 ],
@@ -190,7 +201,7 @@ class MovieDetailsView extends StatelessWidget {
     );
   }
 
-  Widget _buildCastSection(MovieDetails movie) {
+  Widget _buildCastSection(MovieDetailsModel movie) {
     return Column(
       children: [
         Row(
@@ -211,7 +222,7 @@ class MovieDetailsView extends StatelessWidget {
         SingleChildScrollView(
           scrollDirection: Axis.horizontal,
           child: Row(
-            children: [for (final member in movie.cast) _castAvatar(member)],
+            children: [for (final member in movie.topCast) _castAvatar(member)],
           ),
         ),
       ],
@@ -260,7 +271,12 @@ class MovieDetailsView extends StatelessWidget {
           CircleAvatar(
             radius: 38.r,
             backgroundColor: Colors.white12,
-            backgroundImage: AssetImage(member.imageAsset),
+            backgroundImage: member.profilePath != null
+                ? NetworkImage(member.fullProfileUrl)
+                : null,
+            child: member.profilePath == null
+                ? Icon(Icons.person, color: Colors.white38, size: 32.sp)
+                : null,
           ),
           SizedBox(height: 12.h),
           Text(
@@ -272,7 +288,7 @@ class MovieDetailsView extends StatelessWidget {
             ),
           ),
           Text(
-            parts.last,
+            parts.length > 1 ? parts.last : '',
             style: GoogleFonts.inter(color: kSlateText, fontSize: 12.sp),
           ),
         ],

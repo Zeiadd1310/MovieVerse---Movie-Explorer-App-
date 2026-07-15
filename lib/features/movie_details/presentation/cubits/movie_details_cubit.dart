@@ -15,4 +15,18 @@ class MovieDetailsCubit extends Cubit<MovieDetailsState> {
       (movieDetailsModel) => emit(MovieDetailsSuccess(movieDetailsModel)),
     );
   }
+
+  void toggleFavorite() {
+    if (state is MovieDetailsSuccess) {
+      final currentState = state as MovieDetailsSuccess;
+      emit(currentState.copyWith(isFavorite: !currentState.isFavorite));
+    }
+  }
+
+  void toggleBookmark() {
+    if (state is MovieDetailsSuccess) {
+      final currentState = state as MovieDetailsSuccess;
+      emit(currentState.copyWith(isBookmarked: !currentState.isBookmarked));
+    }
+  }
 }
