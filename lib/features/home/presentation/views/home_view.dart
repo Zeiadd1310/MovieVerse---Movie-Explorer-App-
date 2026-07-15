@@ -112,12 +112,7 @@ class HomeView extends StatelessWidget {
       height: 210.h,
       width: double.infinity,
       decoration: BoxDecoration(
-        borderRadius: BorderRadius.only(
-          topLeft: Radius.circular(10.r),
-          topRight: Radius.circular(28.r),
-          bottomLeft: Radius.circular(28.r),
-          bottomRight: Radius.circular(28.r),
-        ),
+        borderRadius: BorderRadius.circular(28.r),
         image: DecorationImage(
           image: AssetImage(banner.image),
           fit: BoxFit.cover,
