@@ -1,13 +1,21 @@
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
+import 'package:movie_verse_app/core/utils/functions/api_service.dart';
+import 'package:movie_verse_app/core/utils/functions/app_flow.dart';
+import 'package:movie_verse_app/core/utils/functions/go_router_refresh_stream.dart';
 import 'package:movie_verse_app/features/auth/presentation/views/forgot_password_view.dart';
 import 'package:movie_verse_app/features/auth/presentation/views/sign_in_view.dart';
 import 'package:movie_verse_app/features/auth/presentation/views/sign_up_view.dart';
 import 'package:movie_verse_app/features/auth/presentation/views/splash_view.dart';
+import 'package:movie_verse_app/features/home/data/repos/home_repo_impl.dart';
+import 'package:movie_verse_app/features/home/presentation/cubits/home_cubit.dart';
 import 'package:movie_verse_app/features/home/presentation/views/home_view.dart';
 import 'package:movie_verse_app/features/layout/main_layout.dart';
 import 'package:movie_verse_app/features/movie_details/presentation/views/movie_details_view.dart';
 import 'package:movie_verse_app/features/movie_details/presentation/views/review_rating_screen.dart';
+import 'package:movie_verse_app/features/search/data/repos/search_repo_impl.dart';
+import 'package:movie_verse_app/features/search/presentation/cubits/search_cubit.dart';
 import 'package:movie_verse_app/features/search/presentation/views/search_view.dart';
 import 'package:movie_verse_app/features/watchlist/presentation/views/watchlist_view.dart';
 import 'package:movie_verse_app/features/favourites/presentation/views/favourites_view.dart';
@@ -22,25 +30,35 @@ abstract class AppRouter {
   static const kWatchlist = '/watchlist';
   static const kFavorites = '/favorites';
   static const kProfile = '/profile';
+
   static String movieDetailsPath([String movieId = 'interstellar']) =>
       '$kMainLayout/movie/$movieId';
+
   static String reviewRatingPath([String movieId = 'interstellar']) =>
       '${movieDetailsPath(movieId)}/review';
 
+  static final _authRefresh =
+      GoRouterRefreshStream(FirebaseAuth.instance.authStateChanges());
+
+  static bool _isAuthRoute(String location) {
+    return location == kSignInView ||
+        location == kSignUpView ||
+        location == kForgotPasswordView;
+  }
+
   static final router = GoRouter(
     initialLocation: kSplashView,
-    redirect: (context, state) {
+    refreshListenable: _authRefresh,
+    redirect: (context, state) async {
       final isLoggedIn = FirebaseAuth.instance.currentUser != null;
-      final isSplash = state.matchedLocation == kSplashView;
-      final isAuthRoute =
-          state.matchedLocation == kSignInView ||
-          state.matchedLocation == kSignUpView ||
-          state.matchedLocation == kForgotPasswordView;
+      final location = state.matchedLocation;
+      final isSplash = location == kSplashView;
+      final isAuthRoute = _isAuthRoute(location);
 
       if (isSplash) return null;
 
       if (!isLoggedIn && !isAuthRoute) {
-        return kSignInView;
+        return AppFlow.unauthenticatedDestination();
       }
 
       if (isLoggedIn && isAuthRoute) {
@@ -74,13 +92,16 @@ abstract class AppRouter {
         builder: (context, state, navigationShell) {
           return MainLayout(navigationShell: navigationShell);
         },
-
         branches: [
           StatefulShellBranch(
             routes: [
               GoRoute(
                 path: kMainLayout,
-                builder: (context, state) => const HomeView(),
+                builder: (context, state) => BlocProvider(
+                  create: (context) =>
+                      HomeCubit(HomeRepoImpl(ApiService()))..getPopularMovies(),
+                  child: const HomeView(),
+                ),
                 routes: [
                   GoRoute(
                     path: 'movie/:movieId',
@@ -110,16 +131,8 @@ abstract class AppRouter {
             routes: [
               GoRoute(
                 path: kWatchlist,
-                builder: (context, state) => const WatchlistView(),
-              ),
-            ],
-          ),
-
-          StatefulShellBranch(
-            routes: [
-              GoRoute(
-                path: kFavorites,
-                builder: (context, state) => const FavouritesView(),
+                builder: (context, state) =>
+                    const TabPlaceholder(title: 'Watchlist'),
               ),
             ],
           ),

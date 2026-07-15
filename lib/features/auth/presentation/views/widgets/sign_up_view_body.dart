@@ -327,7 +327,7 @@ class _SignUpViewBodyState extends State<SignUpViewBody> {
                     onTap: () {
                       GoRouter.of(
                         context,
-                      ).pushReplacement(AppRouter.kSignInView);
+                      ).go(AppRouter.kSignInView);
                     },
                     child: Text(
                       'Sign in instead',

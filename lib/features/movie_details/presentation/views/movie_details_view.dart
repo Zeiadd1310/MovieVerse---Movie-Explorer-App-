@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
@@ -7,6 +8,11 @@ import 'package:movie_verse_app/core/constants/constants.dart';
 import 'package:movie_verse_app/core/data/models/movie.dart';
 import 'package:movie_verse_app/core/data/static/static_data.dart';
 import 'package:movie_verse_app/core/data/providers.dart';
+import 'package:movie_verse_app/core/utils/functions/api_service.dart';
+import 'package:movie_verse_app/features/movie_details/data/models/movie_details_model.dart';
+import 'package:movie_verse_app/features/movie_details/data/repos/movie_details_repo_imp.dart';
+import 'package:movie_verse_app/features/movie_details/presentation/cubits/movie_details_cubit.dart';
+import 'package:movie_verse_app/features/movie_details/presentation/cubits/movie_details_state.dart';
 import 'package:movie_verse_app/core/utils/functions/app_router.dart';
 import 'package:movie_verse_app/features/favourites/presentation/cubits/favorites_cubit.dart';
 
@@ -15,86 +21,134 @@ class MovieDetailsView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final movieId = GoRouterState.of(context).pathParameters['movieId'];
-    final movie = StaticData.movieById(movieId ?? StaticData.interstellar.id);
+    final movieIdParam = GoRouterState.of(context).pathParameters['movieId'];
+    final movieId = int.tryParse(movieIdParam ?? '') ?? 0;
 
-    return BlocProvider.value(
-      value: favoritesCubit,
-      child: Scaffold(
-      backgroundColor: kDetailsBackground,
-      body: Stack(
-        children: [
-          SingleChildScrollView(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
+return MultiBlocProvider(
+  providers: [
+    BlocProvider.value(value: favoritesCubit),
+    BlocProvider(
+      create: (context) => MovieDetailsCubit(
+        MovieDetailsRepoImpl(apiService: ApiService()),
+      )..getMovieDetails(movieId: movieId),
+    ),
+  ],
+  child: Scaffold(
+    backgroundColor: kDetailsBackground,
+    body: BlocBuilder<MovieDetailsCubit, MovieDetailsState>(
+      builder: (context, state) {
+        if (state is MovieDetailsLoading || state is MovieDetailsInitial) {
+          return const Center(
+            child: CircularProgressIndicator(color: kButtonsColor),
+          );
+        }
+        if (state is MovieDetailsError) {
+          return Center(
+            child: Padding(
+              padding: EdgeInsets.symmetric(horizontal: 24.w),
+              child: Text(
+                state.errMessage,
+                textAlign: TextAlign.center,
+                style: GoogleFonts.inter(color: Colors.white, fontSize: 15.sp),
+              ),
+            ),
+          );
+        }
+
+            final successState = state as MovieDetailsSuccess;
+            final movie = successState.movieDetailsModel;
+            final isFavorite = successState.isFavorite;
+            final isBookmarked = successState.isBookmarked;
+
+            return Stack(
               children: [
-                _buildHeader(context, movie),
-                Padding(
-                  padding: EdgeInsets.symmetric(horizontal: 20.w),
+                SingleChildScrollView(
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      SizedBox(height: 25.h),
-                      Text(
-                        movie.title,
-                        style: GoogleFonts.inter(
-                          fontSize: 34.sp,
-                          fontWeight: FontWeight.w800,
-                          color: Colors.white,
-                          letterSpacing: -1.2,
-                        ),
-                      ),
-                      SizedBox(height: 10.h),
-                      Row(
-                        children: [
-                          Icon(Icons.star, color: kButtonsColor, size: 20.sp),
-                          SizedBox(width: 6.w),
-                          Text(
-                            movie.meta,
-                            style: GoogleFonts.inter(
-                              color: kSlateText,
-                              fontSize: 14.sp,
-                              fontWeight: FontWeight.w500,
+                      _buildHeader(context, movie, isFavorite, isBookmarked),
+                      Padding(
+                        padding: EdgeInsets.symmetric(horizontal: 20.w),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            SizedBox(height: 25.h),
+                            Text(
+                              movie.title,
+                              style: GoogleFonts.inter(
+                                fontSize: 34.sp,
+                                fontWeight: FontWeight.w800,
+                                color: Colors.white,
+                                letterSpacing: -1.2,
+                              ),
                             ),
-                          ),
-                        ],
-                      ),
-                      SizedBox(height: 30.h),
-                      _sectionTitle('Overview'),
-                      SizedBox(height: 12.h),
-                      Text(
-                        movie.overview,
-                        style: GoogleFonts.inter(
-                          color: kSlateText,
-                          fontSize: 15.sp,
-                          height: 1.7,
-                          fontWeight: FontWeight.w400,
+                            SizedBox(height: 10.h),
+                            Row(
+                              children: [
+                                Icon(
+                                  Icons.star,
+                                  color: kButtonsColor,
+                                  size: 20.sp,
+                                ),
+                                SizedBox(width: 6.w),
+                                Text(
+                                  '${movie.formattedRating} • ${movie.releaseYear} • ${movie.formattedRuntime}',
+                                  style: GoogleFonts.inter(
+                                    color: kSlateText,
+                                    fontSize: 14.sp,
+                                    fontWeight: FontWeight.w500,
+                                  ),
+                                ),
+                              ],
+                            ),
+                            SizedBox(height: 30.h),
+                            _sectionTitle('Overview'),
+                            SizedBox(height: 12.h),
+                            Text(
+                              movie.overview,
+                              style: GoogleFonts.inter(
+                                color: kSlateText,
+                                fontSize: 15.sp,
+                                height: 1.7,
+                                fontWeight: FontWeight.w400,
+                              ),
+                            ),
+                            SizedBox(height: 35.h),
+                            _buildCastSection(movie),
+                            SizedBox(height: 140.h),
+                          ],
                         ),
                       ),
-                      SizedBox(height: 35.h),
-                      _buildCastSection(movie),
-                      SizedBox(height: 140.h),
                     ],
                   ),
                 ),
+                _buildFloatingWatchButton(context, movieIdParam ?? ''),
               ],
-            ),
-          ),
-          _buildFloatingWatchButton(context, movie.id),
-        ],
+            );
+          },
+        ),
       ),
       ),
     );
   }
 
-  Widget _buildHeader(BuildContext context, MovieDetails movie) {
+  Widget _buildHeader(
+    BuildContext context,
+    MovieDetailsModel movie,
+    bool isFavorite,
+    bool isBookmarked,
+  ) {
     return Stack(
       children: [
-        Image.asset(
-          movie.imageAsset,
+        Image.network(
+          movie.fullBackdropUrl,
           height: 500.h,
           width: double.infinity,
           fit: BoxFit.cover,
+          errorBuilder: (context, error, stackTrace) => Container(
+            height: 500.h,
+            color: Colors.black,
+          ),
         ),
         Container(
           height: 500.h,
@@ -133,9 +187,9 @@ class MovieDetailsView extends StatelessWidget {
           left: 20.w,
           child: Row(
             children: [
-              for (int i = 0; i < movie.genreTags.length; i++) ...[
+              for (int i = 0; i < movie.genres.length; i++) ...[
                 if (i > 0) SizedBox(width: 8.w),
-                _genreChip(movie.genreTags[i], isYellow: i == 0),
+                _genreChip(movie.genres[i].name, isYellow: i == 0),
               ],
             ],
           ),
@@ -144,7 +198,7 @@ class MovieDetailsView extends StatelessWidget {
     );
   }
 
-  Widget _buildCastSection(MovieDetails movie) {
+  Widget _buildCastSection(MovieDetailsModel movie) {
     return Column(
       children: [
         Row(
@@ -165,7 +219,7 @@ class MovieDetailsView extends StatelessWidget {
         SingleChildScrollView(
           scrollDirection: Axis.horizontal,
           child: Row(
-            children: [for (final member in movie.cast) _castAvatar(member)],
+            children: [for (final member in movie.topCast) _castAvatar(member)],
           ),
         ),
       ],
@@ -243,7 +297,12 @@ class MovieDetailsView extends StatelessWidget {
           CircleAvatar(
             radius: 38.r,
             backgroundColor: Colors.white12,
-            backgroundImage: AssetImage(member.imageAsset),
+            backgroundImage: member.profilePath != null
+                ? NetworkImage(member.fullProfileUrl)
+                : null,
+            child: member.profilePath == null
+                ? Icon(Icons.person, color: Colors.white38, size: 32.sp)
+                : null,
           ),
           SizedBox(height: 12.h),
           Text(
@@ -255,7 +314,7 @@ class MovieDetailsView extends StatelessWidget {
             ),
           ),
           Text(
-            parts.last,
+            parts.length > 1 ? parts.last : '',
             style: GoogleFonts.inter(color: kSlateText, fontSize: 12.sp),
           ),
         ],
