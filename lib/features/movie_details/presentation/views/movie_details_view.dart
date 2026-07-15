@@ -21,7 +21,7 @@ class MovieDetailsView extends StatelessWidget {
     return BlocProvider.value(
       value: favoritesCubit,
       child: Scaffold(
-      backgroundColor: const Color(0xFF0E1015),
+      backgroundColor: kDetailsBackground,
       body: Stack(
         children: [
           SingleChildScrollView(
