@@ -15,7 +15,10 @@ class MovieDetailsRepoImpl implements MovieDetailsRepo {
     required int movieId,
   }) async {
     try {
-      final response = await apiService.get(endPoint: 'movie/$movieId');
+      final response = await apiService.get(
+        endPoint: 'movie/$movieId',
+        query: {'append_to_response': 'credits'},
+      );
       final movieDetailsModel = MovieDetailsModel.fromJson(response);
       return Right(movieDetailsModel);
     } on DioException catch (dioError) {

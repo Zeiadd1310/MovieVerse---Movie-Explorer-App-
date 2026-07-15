@@ -28,6 +28,7 @@ class MovieDetailsModel {
   final bool video;
   final double voteAverage;
   final int voteCount;
+  final List<CastMember> cast;
 
   MovieDetailsModel({
     required this.adult,
@@ -56,6 +57,7 @@ class MovieDetailsModel {
     required this.video,
     required this.voteAverage,
     required this.voteCount,
+    required this.cast,
   });
 
   factory MovieDetailsModel.fromJson(Map<String, dynamic> json) {
@@ -96,6 +98,11 @@ class MovieDetailsModel {
       video: json['video'] ?? false,
       voteAverage: (json['vote_average'] as num?)?.toDouble() ?? 0.0,
       voteCount: json['vote_count'] ?? 0,
+      // Cast lives inside credits.cast because we request
+      // append_to_response=credits in the same API call (see repo).
+      cast: ((json['credits']?['cast'] as List<dynamic>?) ?? [])
+          .map((e) => CastMember.fromJson(e))
+          .toList(),
     );
   }
 
@@ -136,6 +143,14 @@ class MovieDetailsModel {
 
   /// Whether this movie belongs to a franchise/collection
   bool get hasCollection => belongsToCollection != null;
+
+  /// Top-billed cast only, sorted by TMDB's own `order` field, capped at 10.
+  /// Use this directly for a "Top Cast" horizontal list.
+  List<CastMember> get topCast {
+    final sorted = List<CastMember>.from(cast)
+      ..sort((a, b) => a.order.compareTo(b.order));
+    return sorted.take(10).toList();
+  }
 
   String _formatCurrency(int amount) {
     if (amount == 0) return 'N/A';
@@ -241,4 +256,35 @@ class SpokenLanguageModel {
       name: json['name'] ?? '',
     );
   }
+}
+
+class CastMember {
+  final int id;
+  final String name;
+  final String character;
+  final String? profilePath;
+  final int order;
+
+  CastMember({
+    required this.id,
+    required this.name,
+    required this.character,
+    required this.profilePath,
+    required this.order,
+  });
+
+  factory CastMember.fromJson(Map<String, dynamic> json) {
+    return CastMember(
+      id: json['id'] ?? 0,
+      name: json['name'] ?? '',
+      character: json['character'] ?? '',
+      profilePath: json['profile_path'],
+      order: json['order'] ?? 0,
+    );
+  }
+
+  /// Network equivalent of your StaticData CastMember's `imageAsset`
+  String get fullProfileUrl => profilePath != null
+      ? 'https://image.tmdb.org/t/p/w300$profilePath'
+      : '';
 }
