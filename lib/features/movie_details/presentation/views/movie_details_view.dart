@@ -120,8 +120,6 @@ class MovieDetailsView extends StatelessWidget {
               _circleIcon(Icons.arrow_back, onTap: () => context.pop()),
               Row(
                 children: [
-                  _buildReactiveBookmark(context, movie),
-                  SizedBox(width: 15.w),
                   _buildReactiveHeart(context, movie),
                   SizedBox(width: 15.w),
                   _circleIcon(Icons.share_outlined),
@@ -204,35 +202,6 @@ class MovieDetailsView extends StatelessWidget {
         final color = isFav ? Colors.red : Colors.white;
         return GestureDetector(
           onTap: () => cubit.toggleFavorite(movieMap),
-          child: Container(
-            padding: EdgeInsets.all(10.r),
-            decoration: const BoxDecoration(
-              color: Colors.black54,
-              shape: BoxShape.circle,
-            ),
-            child: Icon(icon, color: color, size: 22.sp),
-          ),
-        );
-      },
-    );
-  }
-
-  Widget _buildReactiveBookmark(BuildContext context, MovieDetails movie) {
-    return BlocBuilder<FavoritesCubit, FavoritesState>(
-      builder: (ctx, state) {
-        final cubit = ctx.read<FavoritesCubit>();
-        final movieMap = {
-          'id': movie.id,
-          'title': movie.title,
-          'subtitle': movie.subtitle,
-          'rating': movie.rating,
-          'image': movie.imageAsset,
-        };
-        final isInList = cubit.isInWatchlist(movie.id);
-        final icon = isInList ? Icons.bookmark : Icons.bookmark_border;
-        final color = isInList ? Colors.yellow : Colors.white;
-        return GestureDetector(
-          onTap: () => cubit.toggleWatchlist(movieMap),
           child: Container(
             padding: EdgeInsets.all(10.r),
             decoration: const BoxDecoration(
