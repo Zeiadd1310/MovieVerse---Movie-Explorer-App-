@@ -19,7 +19,7 @@ class HomeView extends StatelessWidget {
     return BlocProvider.value(
       value: favoritesCubit,
       child: Scaffold(
-      backgroundColor: const Color(0xFF0E1015),
+      backgroundColor: kBackgroundColor,
       body: SafeArea(
         child: SingleChildScrollView(
           child: Padding(
