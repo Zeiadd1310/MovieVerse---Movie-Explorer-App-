@@ -17,6 +17,8 @@ import 'package:movie_verse_app/features/movie_details/presentation/views/review
 import 'package:movie_verse_app/features/search/data/repos/search_repo_impl.dart';
 import 'package:movie_verse_app/features/search/presentation/cubits/search_cubit.dart';
 import 'package:movie_verse_app/features/search/presentation/views/search_view.dart';
+import 'package:movie_verse_app/features/watchlist/presentation/views/watchlist_view.dart';
+import 'package:movie_verse_app/features/favourites/presentation/views/favourites_view.dart';
 
 abstract class AppRouter {
   static const kSplashView = '/';
@@ -26,6 +28,7 @@ abstract class AppRouter {
   static const kMainLayout = '/home';
   static const kExplore = '/explore';
   static const kWatchlist = '/watchlist';
+  static const kFavorites = '/favorites';
   static const kProfile = '/profile';
 
   static String movieDetailsPath([String movieId = 'interstellar']) =>
@@ -119,12 +122,7 @@ abstract class AppRouter {
             routes: [
               GoRoute(
                 path: kExplore,
-                builder: (context, state) => BlocProvider(
-                  create: (context) =>
-                      SearchCubit(SearchRepoImpl(ApiService()))
-                        ..loadSearchData(),
-                  child: const SearchView(),
-                ),
+                builder: (context, state) => const SearchView(),
               ),
             ],
           ),
