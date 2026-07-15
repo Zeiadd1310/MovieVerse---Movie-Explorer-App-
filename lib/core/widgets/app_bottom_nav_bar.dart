@@ -13,7 +13,7 @@ class AppBottomNavBar extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return BottomNavigationBar(
-      backgroundColor: const Color(0xff111827),
+      backgroundColor: const Color.fromARGB(255, 17, 18, 20),
       selectedItemColor: Colors.amber,
       unselectedItemColor: Colors.grey,
       type: BottomNavigationBarType.fixed,
@@ -25,7 +25,13 @@ class AppBottomNavBar extends StatelessWidget {
         BottomNavigationBarItem(icon: Icon(Icons.explore), label: "Explore"),
         BottomNavigationBarItem(
           icon: Icon(Icons.bookmark_border),
+          activeIcon: Icon(Icons.bookmark),
           label: "Watchlist",
+        ),
+        BottomNavigationBarItem(
+          icon: Icon(Icons.favorite_border),
+          activeIcon: Icon(Icons.favorite),
+          label: "Favorites",
         ),
         BottomNavigationBarItem(
           icon: Icon(Icons.person_outline),

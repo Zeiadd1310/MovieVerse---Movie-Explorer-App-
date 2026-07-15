@@ -16,7 +16,7 @@ class MovieDetailsView extends StatelessWidget {
     final movie = StaticData.movieById(movieId ?? StaticData.interstellar.id);
 
     return Scaffold(
-      backgroundColor: kDetailsBackground,
+      backgroundColor: const Color(0xFF0E1015),
       body: Stack(
         children: [
           SingleChildScrollView(
