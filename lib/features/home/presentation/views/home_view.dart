@@ -1,10 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:movie_verse_app/core/constants/constants.dart';
 import 'package:movie_verse_app/core/data/models/movie.dart';
 import 'package:movie_verse_app/core/data/static/static_data.dart';
+import 'package:movie_verse_app/core/data/providers.dart';
 import 'package:movie_verse_app/core/utils/functions/app_router.dart';
+import 'package:movie_verse_app/features/favourites/presentation/cubits/favorites_cubit.dart';
 
 class HomeView extends StatelessWidget {
   const HomeView({super.key});
@@ -13,7 +16,9 @@ class HomeView extends StatelessWidget {
   Widget build(BuildContext context) {
     final banner = StaticData.featuredBanner;
 
-    return Scaffold(
+    return BlocProvider.value(
+      value: favoritesCubit,
+      child: Scaffold(
       backgroundColor: const Color(0xFF0E1015),
       body: SafeArea(
         child: SingleChildScrollView(
@@ -87,6 +92,7 @@ class HomeView extends StatelessWidget {
           ),
         ),
       ),
+    ),
     );
   }
 
@@ -282,6 +288,56 @@ class HomeView extends StatelessWidget {
                   ),
                 ),
               ),
+              Positioned(
+                top: 8.h,
+                left: 8.w,
+                child: BlocBuilder<FavoritesCubit, FavoritesState>(
+                  builder: (context, state) {
+                    final cubit = context.read<FavoritesCubit>();
+                    final movieMap = {
+                      'id': movie.id,
+                      'title': movie.title,
+                      'subtitle': movie.subtitle,
+                      'rating': movie.rating,
+                      'image': movie.imageAsset,
+                    };
+                    final isFav = cubit.isFavorite(movie.id);
+                    return GestureDetector(
+                      onTap: () => cubit.toggleFavorite(movieMap),
+                      child: Icon(
+                        isFav ? Icons.favorite : Icons.favorite_border,
+                        color: isFav ? Colors.red : Colors.white.withValues(alpha: 0.7),
+                        size: 18.r,
+                      ),
+                    );
+                  },
+                ),
+              ),
+              Positioned(
+                bottom: 8.h,
+                right: 8.w,
+                child: BlocBuilder<FavoritesCubit, FavoritesState>(
+                  builder: (context, state) {
+                    final cubit = context.read<FavoritesCubit>();
+                    final movieMap = {
+                      'id': movie.id,
+                      'title': movie.title,
+                      'subtitle': movie.subtitle,
+                      'rating': movie.rating,
+                      'image': movie.imageAsset,
+                    };
+                    final isInList = cubit.isInWatchlist(movie.id);
+                    return GestureDetector(
+                      onTap: () => cubit.toggleWatchlist(movieMap),
+                      child: Icon(
+                        isInList ? Icons.bookmark : Icons.bookmark_border,
+                        color: isInList ? Colors.yellow : Colors.white.withValues(alpha: 0.7),
+                        size: 18.r,
+                      ),
+                    );
+                  },
+                ),
+              ),
             ],
           ),
           Padding(
@@ -324,14 +380,43 @@ class HomeView extends StatelessWidget {
         ),
         child: Row(
           children: [
-            ClipRRect(
-              borderRadius: BorderRadius.circular(15.r),
-              child: Image.asset(
-                movie.imageAsset,
-                height: 85.h,
-                width: 65.w,
-                fit: BoxFit.cover,
-              ),
+            Stack(
+              children: [
+                ClipRRect(
+                  borderRadius: BorderRadius.circular(15.r),
+                  child: Image.asset(
+                    movie.imageAsset,
+                    height: 85.h,
+                    width: 65.w,
+                    fit: BoxFit.cover,
+                  ),
+                ),
+                Positioned(
+                  top: 4.h,
+                  left: 4.w,
+                  child: BlocBuilder<FavoritesCubit, FavoritesState>(
+                    builder: (context, state) {
+                      final cubit = context.read<FavoritesCubit>();
+                      final movieMap = {
+                        'id': movie.id,
+                        'title': movie.title,
+                        'subtitle': movie.subtitle,
+                        'rating': movie.rating,
+                        'image': movie.imageAsset,
+                      };
+                      final isFav = cubit.isFavorite(movie.id);
+                      return GestureDetector(
+                        onTap: () => cubit.toggleFavorite(movieMap),
+                        child: Icon(
+                          isFav ? Icons.favorite : Icons.favorite_border,
+                          color: isFav ? Colors.red : Colors.white.withValues(alpha: 0.7),
+                          size: 18.r,
+                        ),
+                      );
+                    },
+                  ),
+                ),
+              ],
             ),
             SizedBox(width: 14.w),
             Expanded(
@@ -368,7 +453,27 @@ class HomeView extends StatelessWidget {
                 ],
               ),
             ),
-            Icon(Icons.bookmark_border, color: kButtonsColor, size: 22.sp),
+            BlocBuilder<FavoritesCubit, FavoritesState>(
+              builder: (context, state) {
+                final cubit = context.read<FavoritesCubit>();
+                final movieMap = {
+                  'id': movie.id,
+                  'title': movie.title,
+                  'subtitle': movie.subtitle,
+                  'rating': movie.rating,
+                  'image': movie.imageAsset,
+                };
+                final isInList = cubit.isInWatchlist(movie.id);
+                return GestureDetector(
+                  onTap: () => cubit.toggleWatchlist(movieMap),
+                  child: Icon(
+                    isInList ? Icons.bookmark : Icons.bookmark_border,
+                    color: isInList ? Colors.yellow : kButtonsColor,
+                    size: 22.sp,
+                  ),
+                );
+              },
+            ),
           ],
         ),
       ),

@@ -1,11 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:movie_verse_app/core/constants/constants.dart';
 import 'package:movie_verse_app/core/data/models/movie.dart';
 import 'package:movie_verse_app/core/data/static/static_data.dart';
+import 'package:movie_verse_app/core/data/providers.dart';
 import 'package:movie_verse_app/core/utils/functions/app_router.dart';
+import 'package:movie_verse_app/features/favourites/presentation/cubits/favorites_cubit.dart';
 
 class MovieDetailsView extends StatelessWidget {
   const MovieDetailsView({super.key});
@@ -15,7 +18,9 @@ class MovieDetailsView extends StatelessWidget {
     final movieId = GoRouterState.of(context).pathParameters['movieId'];
     final movie = StaticData.movieById(movieId ?? StaticData.interstellar.id);
 
-    return Scaffold(
+    return BlocProvider.value(
+      value: favoritesCubit,
+      child: Scaffold(
       backgroundColor: const Color(0xFF0E1015),
       body: Stack(
         children: [
@@ -78,6 +83,7 @@ class MovieDetailsView extends StatelessWidget {
           _buildFloatingWatchButton(context, movie.id),
         ],
       ),
+      ),
     );
   }
 
@@ -114,7 +120,9 @@ class MovieDetailsView extends StatelessWidget {
               _circleIcon(Icons.arrow_back, onTap: () => context.pop()),
               Row(
                 children: [
-                  _circleIcon(Icons.favorite_border),
+                  _buildReactiveBookmark(context, movie),
+                  SizedBox(width: 15.w),
+                  _buildReactiveHeart(context, movie),
                   SizedBox(width: 15.w),
                   _circleIcon(Icons.share_outlined),
                 ],
@@ -177,6 +185,64 @@ class MovieDetailsView extends StatelessWidget {
         ),
         child: Icon(icon, color: Colors.white, size: 22.sp),
       ),
+    );
+  }
+
+  Widget _buildReactiveHeart(BuildContext context, MovieDetails movie) {
+    return BlocBuilder<FavoritesCubit, FavoritesState>(
+      builder: (ctx, state) {
+        final cubit = ctx.read<FavoritesCubit>();
+        final movieMap = {
+          'id': movie.id,
+          'title': movie.title,
+          'subtitle': movie.subtitle,
+          'rating': movie.rating,
+          'image': movie.imageAsset,
+        };
+        final isFav = cubit.isFavorite(movie.id);
+        final icon = isFav ? Icons.favorite : Icons.favorite_border;
+        final color = isFav ? Colors.red : Colors.white;
+        return GestureDetector(
+          onTap: () => cubit.toggleFavorite(movieMap),
+          child: Container(
+            padding: EdgeInsets.all(10.r),
+            decoration: const BoxDecoration(
+              color: Colors.black54,
+              shape: BoxShape.circle,
+            ),
+            child: Icon(icon, color: color, size: 22.sp),
+          ),
+        );
+      },
+    );
+  }
+
+  Widget _buildReactiveBookmark(BuildContext context, MovieDetails movie) {
+    return BlocBuilder<FavoritesCubit, FavoritesState>(
+      builder: (ctx, state) {
+        final cubit = ctx.read<FavoritesCubit>();
+        final movieMap = {
+          'id': movie.id,
+          'title': movie.title,
+          'subtitle': movie.subtitle,
+          'rating': movie.rating,
+          'image': movie.imageAsset,
+        };
+        final isInList = cubit.isInWatchlist(movie.id);
+        final icon = isInList ? Icons.bookmark : Icons.bookmark_border;
+        final color = isInList ? Colors.yellow : Colors.white;
+        return GestureDetector(
+          onTap: () => cubit.toggleWatchlist(movieMap),
+          child: Container(
+            padding: EdgeInsets.all(10.r),
+            decoration: const BoxDecoration(
+              color: Colors.black54,
+              shape: BoxShape.circle,
+            ),
+            child: Icon(icon, color: color, size: 22.sp),
+          ),
+        );
+      },
     );
   }
 

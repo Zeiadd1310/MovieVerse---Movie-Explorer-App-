@@ -1,8 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:go_router/go_router.dart';
 import 'package:movie_verse_app/core/constants/constants.dart';
+import 'package:movie_verse_app/core/data/providers.dart';
+import 'package:movie_verse_app/features/favourites/presentation/cubits/favorites_cubit.dart';
 
 class WatchlistView extends StatefulWidget {
   const WatchlistView({super.key});
@@ -101,7 +104,9 @@ class _WatchlistViewState extends State<WatchlistView>
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
+    return BlocProvider.value(
+      value: favoritesCubit,
+      child: Scaffold(
       backgroundColor: const Color(0xFF0E1015),
       body: SafeArea(
         child: Column(
@@ -187,6 +192,7 @@ class _WatchlistViewState extends State<WatchlistView>
           ],
         ),
       ),
+      ),
     );
   }
 
@@ -217,14 +223,43 @@ class _WatchlistViewState extends State<WatchlistView>
     return Row(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        ClipRRect(
-          borderRadius: BorderRadius.circular(12.r),
-          child: Image.asset(
-            item['image'] as String,
-            width: 85.w,
-            height: 120.h,
-            fit: BoxFit.cover,
-          ),
+        Stack(
+          children: [
+            ClipRRect(
+              borderRadius: BorderRadius.circular(12.r),
+              child: Image.asset(
+                item['image'] as String,
+                width: 85.w,
+                height: 120.h,
+                fit: BoxFit.cover,
+              ),
+            ),
+            Positioned(
+              top: 2.h,
+              right: 2.w,
+              child: BlocBuilder<FavoritesCubit, FavoritesState>(
+                builder: (context, state) {
+                  final cubit = context.read<FavoritesCubit>();
+                  final itemId = item['id'] as String? ?? item['title'] as String;
+                  final isFav = cubit.isFavorite(itemId);
+                  return GestureDetector(
+                    onTap: () => cubit.toggleFavorite({
+                      'id': itemId,
+                      'title': item['title'] ?? '',
+                      'subtitle': item['subtitle'] ?? '',
+                      'rating': item['rating'] ?? '',
+                      'image': item['image'] ?? '',
+                    }),
+                    child: Icon(
+                      isFav ? Icons.favorite : Icons.favorite_border,
+                      color: isFav ? Colors.red : Colors.white.withValues(alpha: 0.7),
+                      size: 14.r,
+                    ),
+                  );
+                },
+              ),
+            ),
+          ],
         ),
         SizedBox(width: 16.w),
         Expanded(
