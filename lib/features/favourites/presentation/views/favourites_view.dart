@@ -56,7 +56,7 @@ class _FavouritesViewState extends State<FavouritesView>
   @override
   void initState() {
     super.initState();
-    _tabController = TabController(length: 3, vsync: this);
+    _tabController = TabController(length: 1, vsync: this);
   }
 
   @override
@@ -115,7 +115,7 @@ class _FavouritesViewState extends State<FavouritesView>
                 labelColor: kButtonsColor,
                 unselectedLabelColor: kSlateText,
                 labelStyle: GoogleFonts.poppins(
-                  fontSize: 14.sp,
+                  fontSize: 20.sp,
                   fontWeight: FontWeight.w600,
                 ),
                 unselectedLabelStyle: GoogleFonts.poppins(
@@ -124,8 +124,6 @@ class _FavouritesViewState extends State<FavouritesView>
                 ),
                 tabs: const [
                   Tab(text: 'Movies'),
-                  Tab(text: 'TV Shows'),
-                  Tab(text: 'Actors'),
                 ],
               ),
             ),
@@ -135,8 +133,6 @@ class _FavouritesViewState extends State<FavouritesView>
                 controller: _tabController,
                 children: [
                   _buildMoviesList(),
-                  _buildEmptyTab('No TV Shows yet'),
-                  _buildEmptyTab('No Actors yet'),
                 ],
               ),
             ),
@@ -280,12 +276,4 @@ class _FavouritesViewState extends State<FavouritesView>
     );
   }
 
-  Widget _buildEmptyTab(String text) {
-    return Center(
-      child: Text(
-        text,
-        style: GoogleFonts.poppins(color: kSlateText, fontSize: 16.sp),
-      ),
-    );
-  }
 }
