@@ -17,7 +17,12 @@ import 'package:movie_verse_app/features/movie_details/presentation/views/review
 import 'package:movie_verse_app/features/search/data/repos/search_repo_impl.dart';
 import 'package:movie_verse_app/features/search/presentation/cubits/search_cubit.dart';
 import 'package:movie_verse_app/features/search/presentation/views/search_view.dart';
+import 'package:movie_verse_app/features/movie_details/data/models/movie_details_model.dart';
 
+
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:movie_verse_app/features/movie_details/data/repos/review_repo_impl.dart';
+import 'package:movie_verse_app/features/movie_details/presentation/cubits/review_cubit.dart';
 abstract class AppRouter {
   static const kSplashView = '/';
   static const kSignUpView = '/signUpView';
@@ -105,9 +110,22 @@ abstract class AppRouter {
                     builder: (context, state) => const MovieDetailsView(),
                     routes: [
                       GoRoute(
-                        path: 'review',
-                        builder: (context, state) => const ReviewRatingScreen(),
-                      ),
+  path: 'review',
+ builder: (context, state) {
+  final movie = state.extra as MovieDetailsModel;
+
+  return BlocProvider(
+    create: (_) => ReviewCubit(
+      ReviewRepoImpl(
+        firestore: FirebaseFirestore.instance,
+      ),
+    ),
+    child: ReviewRatingScreen(
+      movie: movie,
+    ),
+  );
+},
+),
                     ],
                   ),
                 ],
