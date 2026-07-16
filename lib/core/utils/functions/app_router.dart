@@ -37,8 +37,9 @@ abstract class AppRouter {
   static String reviewRatingPath([String movieId = 'interstellar']) =>
       '${movieDetailsPath(movieId)}/review';
 
-  static final _authRefresh =
-      GoRouterRefreshStream(FirebaseAuth.instance.authStateChanges());
+  static final _authRefresh = GoRouterRefreshStream(
+    FirebaseAuth.instance.authStateChanges(),
+  );
 
   static bool _isAuthRoute(String location) {
     return location == kSignInView ||
