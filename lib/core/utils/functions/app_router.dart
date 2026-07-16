@@ -8,6 +8,7 @@ import 'package:movie_verse_app/features/auth/presentation/views/forgot_password
 import 'package:movie_verse_app/features/auth/presentation/views/sign_in_view.dart';
 import 'package:movie_verse_app/features/auth/presentation/views/sign_up_view.dart';
 import 'package:movie_verse_app/features/auth/presentation/views/splash_view.dart';
+import 'package:movie_verse_app/features/favourites/presentation/views/favourites_view.dart';
 import 'package:movie_verse_app/features/home/data/repos/home_repo_impl.dart';
 import 'package:movie_verse_app/features/home/presentation/cubits/home_cubit.dart';
 import 'package:movie_verse_app/features/home/presentation/views/home_view.dart';
@@ -18,6 +19,7 @@ import 'package:movie_verse_app/features/search/data/repos/search_repo_impl.dart
 import 'package:movie_verse_app/features/search/presentation/cubits/search_cubit.dart';
 import 'package:movie_verse_app/features/search/presentation/views/search_view.dart';
 import 'package:movie_verse_app/features/movie_details/data/models/movie_details_model.dart';
+import 'package:movie_verse_app/features/watchlist/presentation/views/watchlist_view.dart';
 
 
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -31,6 +33,7 @@ abstract class AppRouter {
   static const kMainLayout = '/home';
   static const kExplore = '/explore';
   static const kWatchlist = '/watchlist';
+  static const kFavorites = '/favorites';
   static const kProfile = '/profile';
 
   static String movieDetailsPath([String movieId = 'interstellar']) =>
@@ -151,8 +154,16 @@ abstract class AppRouter {
             routes: [
               GoRoute(
                 path: kWatchlist,
-                builder: (context, state) =>
-                    const TabPlaceholder(title: 'Watchlist'),
+                builder: (context, state) => const WatchlistView(),
+              ),
+            ],
+          ),
+
+          StatefulShellBranch(
+            routes: [
+              GoRoute(
+                path: kFavorites,
+                builder: (context, state) => const FavouritesView(),
               ),
             ],
           ),

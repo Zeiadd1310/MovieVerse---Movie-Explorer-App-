@@ -141,6 +141,14 @@ class MovieDetailsModel {
   /// Vote average rounded to 1 decimal, e.g. "8.2"
   String get formattedRating => voteAverage.toStringAsFixed(1);
 
+  Map<String, dynamic> toFavoriteMap() => {
+        'id': id.toString(),
+        'title': title,
+        'subtitle': '$genreNames • $releaseYear',
+        'rating': formattedRating,
+        'image': fullPosterUrl,
+      };
+
   /// Whether this movie belongs to a franchise/collection
   bool get hasCollection => belongsToCollection != null;
 

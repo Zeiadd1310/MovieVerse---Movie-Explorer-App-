@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:go_router/go_router.dart';
 import 'package:movie_verse_app/core/constants/constants.dart';
+import 'package:movie_verse_app/core/data/providers.dart';
+import 'package:movie_verse_app/features/favourites/presentation/cubits/favorites_cubit.dart';
+import 'package:go_router/go_router.dart';
 import 'package:movie_verse_app/core/utils/functions/app_router.dart';
 import 'package:movie_verse_app/features/search/presentation/cubits/search_cubit.dart';
 import 'package:movie_verse_app/features/search/presentation/cubits/search_state.dart';
@@ -13,7 +15,9 @@ class SearchView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
+    return BlocProvider.value(
+      value: favoritesCubit,
+      child: Scaffold(
       backgroundColor: kBackgroundColor,
       body: SafeArea(
         child: BlocBuilder<SearchCubit, SearchState>(
@@ -159,6 +163,7 @@ class SearchView extends StatelessWidget {
           },
         ),
       ),
+      ),
     );
   }
 
@@ -296,6 +301,44 @@ class SearchView extends StatelessWidget {
                       ],
                     ),
                   ),
+                ),
+                Positioned(
+                  top: 8.h,
+                  right: 8.w,
+                  child: BlocBuilder<FavoritesCubit, FavoritesState>(
+                    builder: (context, state) {
+                      final cubit = context.read<FavoritesCubit>();
+                      final movieMap = movie.toFavoriteMap();
+                      final isFav = cubit.isFavorite(movie.id.toString());
+                    return GestureDetector(
+                      onTap: () => cubit.toggleFavorite(movieMap),
+                      child: Icon(
+                        isFav ? Icons.favorite : Icons.favorite_border,
+                        color: isFav ? Colors.red : Colors.white.withValues(alpha: 0.7),
+                        size: 18.r,
+                      ),
+                    );
+                  },
+                ),
+                ),
+                Positioned(
+                  bottom: 8.h,
+                  right: 8.w,
+                  child: BlocBuilder<FavoritesCubit, FavoritesState>(
+                    builder: (context, state) {
+                      final cubit = context.read<FavoritesCubit>();
+                      final movieMap = movie.toFavoriteMap();
+                      final isInList = cubit.isInWatchlist(movie.id.toString());
+                    return GestureDetector(
+                      onTap: () => cubit.toggleWatchlist(movieMap),
+                      child: Icon(
+                        isInList ? Icons.bookmark : Icons.bookmark_border,
+                        color: isInList ? Colors.yellow : Colors.white.withValues(alpha: 0.7),
+                        size: 18.r,
+                      ),
+                    );
+                  },
+                ),
                 ),
               ],
             ),
