@@ -96,7 +96,11 @@ class _WatchlistViewState extends State<WatchlistView>
     setState(() => data.removeAt(index));
   }
 
-  void _moveItem(List<Map<String, dynamic>> from, List<Map<String, dynamic>> to, int index) {
+  void _moveItem(
+    List<Map<String, dynamic>> from,
+    List<Map<String, dynamic>> to,
+    int index,
+  ) {
     setState(() {
       to.add(from.removeAt(index));
     });
@@ -107,91 +111,95 @@ class _WatchlistViewState extends State<WatchlistView>
     return BlocProvider.value(
       value: favoritesCubit,
       child: Scaffold(
-      backgroundColor: const Color(0xFF0E1015),
-      body: SafeArea(
-        child: Column(
-          children: [
-            Padding(
-              padding: EdgeInsets.symmetric(horizontal: 20.w, vertical: 12.h),
-              child: Row(
-                children: [
-                  GestureDetector(
-                    onTap: () => context.go('/home'),
-                    child: Icon(Icons.arrow_back_ios, color: Colors.white, size: 20.r),
-                  ),
-                  Expanded(
-                    child: Text(
-                      'My Watchlist',
-                      textAlign: TextAlign.center,
-                      style: GoogleFonts.poppins(
+        backgroundColor: const Color(0xFF0E1015),
+        body: SafeArea(
+          child: Column(
+            children: [
+              Padding(
+                padding: EdgeInsets.symmetric(horizontal: 20.w, vertical: 12.h),
+                child: Row(
+                  children: [
+                    GestureDetector(
+                      onTap: () => context.go('/home'),
+                      child: Icon(
+                        Icons.arrow_back_ios,
                         color: Colors.white,
-                        fontSize: 23.sp,
-                        fontWeight: FontWeight.w600,
+                        size: 20.r,
                       ),
                     ),
-                  ),
-                  Icon(Icons.search, color: kButtonsColor, size: 24.r),
-                ],
-              ),
-            ),
-            SizedBox(height: 20.h),
-            Padding(
-              padding: EdgeInsets.symmetric(horizontal: 20.w),
-              child: Container(
-                decoration: BoxDecoration(
-                  color: kSurfaceColor,
-                  borderRadius: BorderRadius.circular(8.r),
-                ),
-                child: TabBar(
-                  controller: _tabController,
-                  indicator: BoxDecoration(
-                    color: const Color.fromARGB(255, 24, 24, 26),
-                    borderRadius: BorderRadius.circular(8.r),
-                  ),
-                  indicatorSize: TabBarIndicatorSize.tab,
-                  dividerColor: Colors.transparent,
-                  labelColor: Colors.white,
-                  unselectedLabelColor: kSlateText,
-                  labelStyle: GoogleFonts.poppins(
-                    fontSize: 17.sp,
-                    fontWeight: FontWeight.w600,
-                  ),
-                  unselectedLabelStyle: GoogleFonts.poppins(
-                    fontSize: 17.sp,
-                    fontWeight: FontWeight.w400,
-                  ),
-                  labelPadding: EdgeInsets.zero,
-                  padding: EdgeInsets.zero,
-                  tabs: const [
-                    Tab(text: 'To Watch'),
-                    Tab(text: 'Watched'),
+                    Expanded(
+                      child: Text(
+                        'My Watchlist',
+                        textAlign: TextAlign.center,
+                        style: GoogleFonts.poppins(
+                          color: Colors.white,
+                          fontSize: 23.sp,
+                          fontWeight: FontWeight.w600,
+                        ),
+                      ),
+                    ),
+                    Icon(Icons.search, color: kButtonsColor, size: 24.r),
                   ],
                 ),
               ),
-            ),
-            Container(
-              height: 1.h,
-              width: double.infinity,
-              color: Colors.white.withValues(alpha: 0.1),
-            ),
-            SizedBox(height: 8.h),
-            Container(
-              height: 1,
-              width: double.infinity,
-              color: Colors.white.withValues(alpha: 0.1),
-            ),
-            Expanded(
-              child: TabBarView(
-                controller: _tabController,
-                children: [
-                  _buildList(_toWatch, false),
-                  _buildList(_watched, true),
-                ],
+              SizedBox(height: 20.h),
+              Padding(
+                padding: EdgeInsets.symmetric(horizontal: 20.w),
+                child: Container(
+                  decoration: BoxDecoration(
+                    color: kSurfaceColor,
+                    borderRadius: BorderRadius.circular(8.r),
+                  ),
+                  child: TabBar(
+                    controller: _tabController,
+                    indicator: BoxDecoration(
+                      color: const Color.fromARGB(255, 24, 24, 26),
+                      borderRadius: BorderRadius.circular(8.r),
+                    ),
+                    indicatorSize: TabBarIndicatorSize.tab,
+                    dividerColor: Colors.transparent,
+                    labelColor: Colors.white,
+                    unselectedLabelColor: kSlateText,
+                    labelStyle: GoogleFonts.poppins(
+                      fontSize: 17.sp,
+                      fontWeight: FontWeight.w600,
+                    ),
+                    unselectedLabelStyle: GoogleFonts.poppins(
+                      fontSize: 17.sp,
+                      fontWeight: FontWeight.w400,
+                    ),
+                    labelPadding: EdgeInsets.zero,
+                    padding: EdgeInsets.zero,
+                    tabs: const [
+                      Tab(text: 'To Watch'),
+                      Tab(text: 'Watched'),
+                    ],
+                  ),
+                ),
               ),
-            ),
-          ],
+              Container(
+                height: 1.h,
+                width: double.infinity,
+                color: Colors.white.withValues(alpha: 0.1),
+              ),
+              SizedBox(height: 8.h),
+              Container(
+                height: 1,
+                width: double.infinity,
+                color: Colors.white.withValues(alpha: 0.1),
+              ),
+              Expanded(
+                child: TabBarView(
+                  controller: _tabController,
+                  children: [
+                    _buildList(_toWatch, false),
+                    _buildList(_watched, true),
+                  ],
+                ),
+              ),
+            ],
+          ),
         ),
-      ),
       ),
     );
   }
@@ -210,7 +218,11 @@ class _WatchlistViewState extends State<WatchlistView>
           background: Container(
             alignment: Alignment.centerRight,
             padding: EdgeInsets.only(right: 24.w),
-            child: Icon(Icons.delete_outline, color: Colors.redAccent, size: 28.r),
+            child: Icon(
+              Icons.delete_outline,
+              color: Colors.redAccent,
+              size: 28.r,
+            ),
           ),
           child: _buildRow(item, i, data, isWatched),
         );
@@ -218,8 +230,12 @@ class _WatchlistViewState extends State<WatchlistView>
     );
   }
 
-  Widget _buildRow(Map<String, dynamic> item, int index,
-      List<Map<String, dynamic>> data, bool isWatched) {
+  Widget _buildRow(
+    Map<String, dynamic> item,
+    int index,
+    List<Map<String, dynamic>> data,
+    bool isWatched,
+  ) {
     return Row(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -240,7 +256,8 @@ class _WatchlistViewState extends State<WatchlistView>
               child: BlocBuilder<FavoritesCubit, FavoritesState>(
                 builder: (context, state) {
                   final cubit = context.read<FavoritesCubit>();
-                  final itemId = item['id'] as String? ?? item['title'] as String;
+                  final itemId =
+                      item['id'] as String? ?? item['title'] as String;
                   final isFav = cubit.isFavorite(itemId);
                   return GestureDetector(
                     onTap: () => cubit.toggleFavorite({
@@ -252,7 +269,9 @@ class _WatchlistViewState extends State<WatchlistView>
                     }),
                     child: Icon(
                       isFav ? Icons.favorite : Icons.favorite_border,
-                      color: isFav ? Colors.red : Colors.white.withValues(alpha: 0.7),
+                      color: isFav
+                          ? Colors.red
+                          : Colors.white.withValues(alpha: 0.7),
                       size: 14.r,
                     ),
                   );
@@ -319,7 +338,10 @@ class _WatchlistViewState extends State<WatchlistView>
                     GestureDetector(
                       onTap: () => _moveItem(data, _watched, index),
                       child: Container(
-                        padding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 6.h),
+                        padding: EdgeInsets.symmetric(
+                          horizontal: 12.w,
+                          vertical: 6.h,
+                        ),
                         decoration: BoxDecoration(
                           color: kButtonsColor,
                           borderRadius: BorderRadius.circular(8.r),
@@ -336,7 +358,10 @@ class _WatchlistViewState extends State<WatchlistView>
                     ),
                   if (isWatched)
                     Container(
-                      padding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 6.h),
+                      padding: EdgeInsets.symmetric(
+                        horizontal: 12.w,
+                        vertical: 6.h,
+                      ),
                       decoration: BoxDecoration(
                         color: const Color(0xFF4CAF50),
                         borderRadius: BorderRadius.circular(8.r),

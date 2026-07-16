@@ -1,6 +1,3 @@
-/// Model for the TMDB `/movie/{movie_id}` endpoint response.
-/// Place this in: lib/features/movie_details/data/models/movie_details_model.dart
-
 class MovieDetailsModel {
   final bool adult;
   final String? backdropPath;
@@ -80,12 +77,14 @@ class MovieDetailsModel {
       overview: json['overview'] ?? '',
       popularity: (json['popularity'] as num?)?.toDouble() ?? 0.0,
       posterPath: json['poster_path'],
-      productionCompanies: (json['production_companies'] as List<dynamic>? ?? [])
-          .map((e) => ProductionCompanyModel.fromJson(e))
-          .toList(),
-      productionCountries: (json['production_countries'] as List<dynamic>? ?? [])
-          .map((e) => ProductionCountryModel.fromJson(e))
-          .toList(),
+      productionCompanies:
+          (json['production_companies'] as List<dynamic>? ?? [])
+              .map((e) => ProductionCompanyModel.fromJson(e))
+              .toList(),
+      productionCountries:
+          (json['production_countries'] as List<dynamic>? ?? [])
+              .map((e) => ProductionCountryModel.fromJson(e))
+              .toList(),
       releaseDate: json['release_date'] ?? '',
       revenue: json['revenue'] ?? 0,
       runtime: json['runtime'] ?? 0,
@@ -109,9 +108,8 @@ class MovieDetailsModel {
   // ---- Convenience getters for UI ----
 
   /// Full poster URL, e.g. for use in Image.network()
-  String get fullPosterUrl => posterPath != null
-      ? 'https://image.tmdb.org/t/p/w500$posterPath'
-      : '';
+  String get fullPosterUrl =>
+      posterPath != null ? 'https://image.tmdb.org/t/p/w500$posterPath' : '';
 
   /// Full backdrop URL
   String get fullBackdropUrl => backdropPath != null
@@ -142,12 +140,12 @@ class MovieDetailsModel {
   String get formattedRating => voteAverage.toStringAsFixed(1);
 
   Map<String, dynamic> toFavoriteMap() => {
-        'id': id.toString(),
-        'title': title,
-        'subtitle': '$genreNames • $releaseYear',
-        'rating': formattedRating,
-        'image': fullPosterUrl,
-      };
+    'id': id.toString(),
+    'title': title,
+    'subtitle': '$genreNames • $releaseYear',
+    'rating': formattedRating,
+    'image': fullPosterUrl,
+  };
 
   /// Whether this movie belongs to a franchise/collection
   bool get hasCollection => belongsToCollection != null;
@@ -202,10 +200,7 @@ class GenreModel {
   GenreModel({required this.id, required this.name});
 
   factory GenreModel.fromJson(Map<String, dynamic> json) {
-    return GenreModel(
-      id: json['id'] ?? 0,
-      name: json['name'] ?? '',
-    );
+    return GenreModel(id: json['id'] ?? 0, name: json['name'] ?? '');
   }
 }
 
@@ -292,7 +287,6 @@ class CastMember {
   }
 
   /// Network equivalent of your StaticData CastMember's `imageAsset`
-  String get fullProfileUrl => profilePath != null
-      ? 'https://image.tmdb.org/t/p/w300$profilePath'
-      : '';
+  String get fullProfileUrl =>
+      profilePath != null ? 'https://image.tmdb.org/t/p/w300$profilePath' : '';
 }

@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:movie_verse_app/core/constants/constants.dart';
-import 'package:movie_verse_app/core/data/static/static_data.dart';
 import 'package:movie_verse_app/widgets/movie_card.dart';
 import 'package:movie_verse_app/widgets/rating_card.dart';
 import 'package:movie_verse_app/features/movie_details/data/models/movie_details_model.dart';
@@ -14,20 +13,37 @@ import 'package:movie_verse_app/features/movie_details/presentation/cubits/revie
 class ReviewRatingScreen extends StatefulWidget {
   final MovieDetailsModel movie;
 
-  const ReviewRatingScreen({
-    super.key,
-    required this.movie,
-  });
+  const ReviewRatingScreen({super.key, required this.movie});
 
   @override
   State<ReviewRatingScreen> createState() => _ReviewPageState();
 }
 
 class _ReviewPageState extends State<ReviewRatingScreen> {
-  bool _isSpoiler = false;
   double _rating = 0;
-  final List<String> _selectedTags = [];
+  bool _isEditing = false;
+  bool _isSubmitting = false;
   final TextEditingController _reviewController = TextEditingController();
+
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      final userId = FirebaseAuth.instance.currentUser?.uid;
+      if (userId != null && mounted) {
+        context.read<ReviewCubit>().getReview(
+          userId: userId,
+          movieId: widget.movie.id,
+        );
+      }
+    });
+  }
+
+  void _applyExistingReview(ReviewModel review) {
+    _rating = review.rating;
+    _reviewController.text = review.review;
+    _isEditing = true;
+  }
 
   @override
   void dispose() {
@@ -59,7 +75,7 @@ class _ReviewPageState extends State<ReviewRatingScreen> {
           onPressed: () => Navigator.pop(context),
         ),
         title: Text(
-          'Write a Review',
+          _isEditing ? 'Edit Review' : 'Write a Review',
           style: TextStyle(
             color: Colors.white,
             fontSize: 18.sp,
@@ -69,7 +85,10 @@ class _ReviewPageState extends State<ReviewRatingScreen> {
       ),
       body: BlocConsumer<ReviewCubit, ReviewState>(
         listener: (context, state) {
-          if (state is ReviewSubmitted) {
+          if (state is ReviewSuccess && state.review != null && !_isEditing) {
+            setState(() => _applyExistingReview(state.review!));
+          } else if (state is ReviewSubmitted) {
+            setState(() => _isSubmitting = false);
             ScaffoldMessenger.of(context).showSnackBar(
               const SnackBar(
                 content: Text('Review submitted successfully!'),
@@ -79,6 +98,7 @@ class _ReviewPageState extends State<ReviewRatingScreen> {
             );
             Navigator.pop(context); // Close page after success
           } else if (state is ReviewError) {
+            setState(() => _isSubmitting = false);
             // Displays a dialog on screen if Firebase returns an error
             showDialog(
               context: context,
@@ -86,7 +106,10 @@ class _ReviewPageState extends State<ReviewRatingScreen> {
                 backgroundColor: cardColor,
                 title: const Text(
                   "Submission Failed",
-                  style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
+                  style: TextStyle(
+                    color: Colors.white,
+                    fontWeight: FontWeight.bold,
+                  ),
                 ),
                 content: Text(
                   state.errMessage,
@@ -95,8 +118,11 @@ class _ReviewPageState extends State<ReviewRatingScreen> {
                 actions: [
                   TextButton(
                     onPressed: () => Navigator.pop(context),
-                    child: const Text("OK", style: TextStyle(color: kButtonsColor)),
-                  )
+                    child: const Text(
+                      "OK",
+                      style: TextStyle(color: kButtonsColor),
+                    ),
+                  ),
                 ],
               ),
             );
@@ -153,8 +179,12 @@ class _ReviewPageState extends State<ReviewRatingScreen> {
                       maxLines: 5,
                       style: TextStyle(color: Colors.white, fontSize: 14.sp),
                       decoration: InputDecoration(
-                        hintText: 'What did you think of the story, acting, and visuals?',
-                        hintStyle: TextStyle(color: Colors.grey, fontSize: 14.sp),
+                        hintText:
+                            'What did you think of the story, acting, and visuals?',
+                        hintStyle: TextStyle(
+                          color: Colors.grey,
+                          fontSize: 14.sp,
+                        ),
                         fillColor: cardColor,
                         filled: true,
                         border: OutlineInputBorder(
@@ -162,108 +192,29 @@ class _ReviewPageState extends State<ReviewRatingScreen> {
                           borderSide: BorderSide.none,
                         ),
                         counterText: '${_reviewController.text.length} / 1000',
-                        counterStyle: TextStyle(color: Colors.grey, fontSize: 12.sp),
+                        counterStyle: TextStyle(
+                          color: Colors.grey,
+                          fontSize: 12.sp,
+                        ),
                       ),
                       onChanged: (_) => setState(() {}),
-                    ),
-                    SizedBox(height: 25.h),
-                    Text(
-                      'WHAT STOOD OUT?',
-                      style: TextStyle(
-                        color: Colors.grey,
-                        fontSize: 12.sp,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                    SizedBox(height: 12.h),
-                    Wrap(
-                      spacing: 8.w,
-                      runSpacing: 8.h,
-                      children: StaticData.reviewTags.map((label) {
-                        final isSelected = _selectedTags.contains(label);
-                        return FilterChip(
-                          label: Text(label),
-                          labelStyle: TextStyle(
-                            color: isSelected ? Colors.black : Colors.white,
-                            fontSize: 12.sp,
-                            fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
-                          ),
-                          selected: isSelected,
-                          onSelected: (selected) {
-                            setState(() {
-                              selected
-                                  ? _selectedTags.add(label)
-                                  : _selectedTags.remove(label);
-                            });
-                          },
-                          backgroundColor: chipColor,
-                          selectedColor: kButtonsColor,
-                          showCheckmark: false,
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(20.r),
-                            side: BorderSide(
-                              color: isSelected ? kButtonsColor : Colors.transparent,
-                            ),
-                          ),
-                        );
-                      }).toList(),
-                    ),
-                    SizedBox(height: 30.h),
-                    Container(
-                      padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 8.h),
-                      decoration: BoxDecoration(
-                        color: cardColor,
-                        borderRadius: BorderRadius.circular(16.r),
-                      ),
-                      child: Row(
-                        children: [
-                          Icon(
-                            Icons.warning_amber_rounded,
-                            color: Colors.redAccent,
-                            size: 24.sp,
-                          ),
-                          SizedBox(width: 12.w),
-                          Expanded(
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Text(
-                                  'Contain Spoilers?',
-                                  style: TextStyle(
-                                    color: Colors.white,
-                                    fontWeight: FontWeight.bold,
-                                    fontSize: 14.sp,
-                                  ),
-                                ),
-                                Text(
-                                  'Hide review from others',
-                                  style: TextStyle(color: Colors.grey, fontSize: 11.sp),
-                                ),
-                              ],
-                            ),
-                          ),
-                          Switch(
-                            value: _isSpoiler,
-                            onChanged: (val) => setState(() => _isSpoiler = val),
-                            activeThumbColor: Colors.white,
-                            activeTrackColor: Colors.grey,
-                          ),
-                        ],
-                      ),
                     ),
                     SizedBox(height: 40.h),
                     SizedBox(
                       width: double.infinity,
                       height: 58.h,
                       child: ElevatedButton(
-                        onPressed: state is ReviewLoading
+                        onPressed: _isSubmitting
                             ? null // Disable button while loading
                             : () {
-                                final currentUser = FirebaseAuth.instance.currentUser;
+                                final currentUser =
+                                    FirebaseAuth.instance.currentUser;
                                 if (currentUser == null) {
                                   ScaffoldMessenger.of(context).showSnackBar(
                                     const SnackBar(
-                                      content: Text('You must be logged in to submit a review.'),
+                                      content: Text(
+                                        'You must be logged in to submit a review.',
+                                      ),
                                       backgroundColor: Colors.red,
                                     ),
                                   );
@@ -277,16 +228,16 @@ class _ReviewPageState extends State<ReviewRatingScreen> {
                                   review: _reviewController.text,
                                 );
 
-                                // Trigger submit via Cubit
+                                setState(() => _isSubmitting = true);
                                 context.read<ReviewCubit>().submitReview(
-                                      userId: currentUser.uid,
-                                      review: review,
-                                    );
+                                  userId: currentUser.uid,
+                                  review: review,
+                                );
                               },
                         style: ElevatedButton.styleFrom(
                           backgroundColor: kButtonsColor,
                           elevation: 5,
-                          shadowColor: Colors.black.withOpacity(0.5),
+                          shadowColor: Colors.black.withValues(alpha: 0.5),
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(30.r),
                           ),
@@ -295,7 +246,7 @@ class _ReviewPageState extends State<ReviewRatingScreen> {
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
                             Text(
-                              state is ReviewLoading ? 'Submitting...' : 'Submit Review',
+                              _isSubmitting ? 'Submitting...' : 'Submit Review',
                               style: TextStyle(
                                 color: Colors.black,
                                 fontWeight: FontWeight.bold,
@@ -303,7 +254,7 @@ class _ReviewPageState extends State<ReviewRatingScreen> {
                               ),
                             ),
                             SizedBox(width: 10.w),
-                            if (state is! ReviewLoading)
+                            if (!_isSubmitting)
                               Icon(
                                 Icons.play_arrow_outlined,
                                 color: Colors.black,
@@ -318,13 +269,11 @@ class _ReviewPageState extends State<ReviewRatingScreen> {
                 ),
               ),
               // Full Screen Blur/Loading indicator block when active
-              if (state is ReviewLoading)
+              if (_isSubmitting)
                 Container(
-                  color: Colors.black.withOpacity(0.5),
+                  color: Colors.black.withValues(alpha: 0.5),
                   child: const Center(
-                    child: CircularProgressIndicator(
-                      color: kButtonsColor,
-                    ),
+                    child: CircularProgressIndicator(color: kButtonsColor),
                   ),
                 ),
             ],
