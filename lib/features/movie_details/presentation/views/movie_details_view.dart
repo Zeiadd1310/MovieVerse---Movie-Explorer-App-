@@ -1,12 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:movie_verse_app/core/constants/constants.dart';
-import 'package:movie_verse_app/core/data/models/movie.dart';
-import 'package:movie_verse_app/core/data/static/static_data.dart';
 import 'package:movie_verse_app/core/data/providers.dart';
 import 'package:movie_verse_app/core/utils/functions/api_service.dart';
 import 'package:movie_verse_app/features/movie_details/data/models/movie_details_model.dart';
@@ -128,7 +125,6 @@ return MultiBlocProvider(
           },
         ),
       ),
-      ),
     );
   }
 
@@ -240,18 +236,12 @@ return MultiBlocProvider(
     );
   }
 
-  Widget _buildReactiveHeart(BuildContext context, MovieDetails movie) {
+  Widget _buildReactiveHeart(BuildContext context, MovieDetailsModel movie) {
     return BlocBuilder<FavoritesCubit, FavoritesState>(
       builder: (ctx, state) {
         final cubit = ctx.read<FavoritesCubit>();
-        final movieMap = {
-          'id': movie.id,
-          'title': movie.title,
-          'subtitle': movie.subtitle,
-          'rating': movie.rating,
-          'image': movie.imageAsset,
-        };
-        final isFav = cubit.isFavorite(movie.id);
+        final movieMap = movie.toFavoriteMap();
+        final isFav = cubit.isFavorite(movie.id.toString());
         final icon = isFav ? Icons.favorite : Icons.favorite_border;
         final color = isFav ? Colors.red : Colors.white;
         return GestureDetector(

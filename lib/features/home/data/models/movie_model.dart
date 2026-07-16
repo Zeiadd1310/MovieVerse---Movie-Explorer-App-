@@ -31,6 +31,21 @@ class MovieModel {
     required this.voteCount,
   });
 
+  String get releaseYear =>
+      releaseDate.length >= 4 ? releaseDate.substring(0, 4) : releaseDate;
+
+  String get posterUrl => posterPath.isNotEmpty
+      ? 'https://image.tmdb.org/t/p/w500$posterPath'
+      : '';
+
+  Map<String, dynamic> toFavoriteMap() => {
+        'id': id.toString(),
+        'title': title,
+        'subtitle': releaseYear,
+        'rating': voteAverage.toStringAsFixed(1),
+        'image': posterUrl,
+      };
+
   factory MovieModel.fromJson(Map<String, dynamic> json) {
     return MovieModel(
       adult: json['adult'] ?? false,

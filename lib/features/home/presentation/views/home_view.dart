@@ -1,11 +1,8 @@
-import 'package:flutter/material.dart';
+﻿import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:movie_verse_app/core/constants/constants.dart';
-import 'package:movie_verse_app/core/data/models/movie.dart';
-import 'package:movie_verse_app/core/data/static/static_data.dart';
 import 'package:movie_verse_app/core/data/providers.dart';
 import 'package:movie_verse_app/core/utils/functions/app_router.dart';
 import 'package:movie_verse_app/features/favourites/presentation/cubits/favorites_cubit.dart';
@@ -18,137 +15,136 @@ class HomeView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final banner = StaticData.featuredBanner;
-
     return BlocProvider.value(
       value: favoritesCubit,
       child: Scaffold(
-      backgroundColor: kBackgroundColor,
-      body: SafeArea(
-        child: BlocBuilder<HomeCubit, HomeState>(
-          builder: (context, state) {
-            if (state is HomeLoading || state is HomeInitial) {
-              return const Center(child: CircularProgressIndicator());
-            }
+        backgroundColor: kBackgroundColor,
+        body: SafeArea(
+          child: BlocBuilder<HomeCubit, HomeState>(
+            builder: (context, state) {
+              if (state is HomeLoading || state is HomeInitial) {
+                return const Center(child: CircularProgressIndicator());
+              }
 
-            if (state is HomeFailure) {
-              return Center(
-                child: Text(
-                  state.message,
-                  style: const TextStyle(color: Colors.red),
-                ),
-              );
-            }
-
-            if (state is HomeSuccess) {
-              return SingleChildScrollView(
-                child: Padding(
-                  padding: EdgeInsets.symmetric(
-                    horizontal: 18.w,
-                    vertical: 14.h,
+              if (state is HomeFailure) {
+                return Center(
+                  child: Text(
+                    state.message,
+                    style: const TextStyle(color: Colors.red),
                   ),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          Row(
-                            children: [
-                              Icon(
-                                Icons.movie,
-                                color: kButtonsColor,
-                                size: 20.sp,
-                              ),
-                              SizedBox(width: 8.w),
-                              Text(
-                                'MovieExplorer',
-                                style: TextStyle(
-                                  color: Colors.white,
-                                  fontSize: 18.sp,
-                                  fontWeight: FontWeight.w700,
-                                ),
-                              ),
-                            ],
-                          ),
-                          Row(
-                            children: [
-                              _iconButton(
-                                Icons.search,
-                                onTap: () => context.push(AppRouter.kExplore),
-                              ),
-                              SizedBox(width: 10.w),
-                              _iconButton(Icons.notifications_none),
-                            ],
-                          ),
-                        ],
-                      ),
-                      SizedBox(height: 25.h),
-                      _buildBanner(context, state.featuredMovie),
-                      SizedBox(height: 30.h),
-                      _sectionTitle('Categories'),
-                      SizedBox(height: 15.h),
-                      SingleChildScrollView(
-                        scrollDirection: Axis.horizontal,
-                        child: Row(
+                );
+              }
+
+              if (state is HomeSuccess) {
+                return SingleChildScrollView(
+                  child: Padding(
+                    padding: EdgeInsets.symmetric(
+                      horizontal: 18.w,
+                      vertical: 14.h,
+                    ),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
-                            for (final genre in state.genres)
-                              GestureDetector(
-                                onTap: () => context
-                                    .read<HomeCubit>()
-                                    .selectGenre(genre.id),
-                                child: _categoryItem(
-                                  genre.name,
-                                  genre.id == state.selectedGenreId,
+                            Row(
+                              children: [
+                                Icon(
+                                  Icons.movie,
+                                  color: kButtonsColor,
+                                  size: 20.sp,
                                 ),
-                              ),
+                                SizedBox(width: 8.w),
+                                Text(
+                                  'MovieExplorer',
+                                  style: TextStyle(
+                                    color: Colors.white,
+                                    fontSize: 18.sp,
+                                    fontWeight: FontWeight.w700,
+                                  ),
+                                ),
+                              ],
+                            ),
+                            Row(
+                              children: [
+                                _iconButton(
+                                  Icons.search,
+                                  onTap: () => context.push(AppRouter.kExplore),
+                                ),
+                                SizedBox(width: 10.w),
+                                _iconButton(Icons.notifications_none),
+                              ],
+                            ),
                           ],
                         ),
-                      ),
-                      SizedBox(height: 30.h),
-                      _sectionTitle('Trending Now'),
-                      SizedBox(height: 18.h),
-                      SizedBox(
-                        height: 270.h,
-                        child: ListView.separated(
+                        SizedBox(height: 25.h),
+                        _buildBanner(context, state.featuredMovie),
+                        SizedBox(height: 30.h),
+                        _sectionTitle('Categories'),
+                        SizedBox(height: 15.h),
+                        SingleChildScrollView(
                           scrollDirection: Axis.horizontal,
-                          itemCount: state.trendingMovies.length,
-                          separatorBuilder: (_, index) => SizedBox(width: 15.w),
-                          itemBuilder: (_, index) =>
-                              _trendingCardApi(state.trendingMovies[index]),
-                        ),
-                      ),
-                      SizedBox(height: 18.h),
-
-                      _sectionTitle('Popular Movies'),
-                      SizedBox(height: 18.h),
-                      Column(
-                        children: state.movies
-                            .map(
-                              (movie) => Padding(
-                                padding: EdgeInsets.only(bottom: 15.h),
-                                child: _popularMovieTileApi(
-                                  context,
-                                  movie,
-                                  state.favoriteMovieIds.contains(movie.id),
+                          child: Row(
+                            children: [
+                              for (final genre in state.genres)
+                                GestureDetector(
+                                  onTap: () => context
+                                      .read<HomeCubit>()
+                                      .selectGenre(genre.id),
+                                  child: _categoryItem(
+                                    genre.name,
+                                    genre.id == state.selectedGenreId,
+                                  ),
                                 ),
-                              ),
-                            )
-                            .toList(),
-                      ),
-                      SizedBox(height: 20.h),
-                      SizedBox(height: 30.h),
-                    ],
-                  ),
-                ),
-              );
-            }
+                            ],
+                          ),
+                        ),
+                        SizedBox(height: 30.h),
+                        _sectionTitle('Trending Now'),
+                        SizedBox(height: 18.h),
+                        SizedBox(
+                          height: 270.h,
+                          child: ListView.separated(
+                            scrollDirection: Axis.horizontal,
+                            itemCount: state.trendingMovies.length,
+                            separatorBuilder: (_, index) =>
+                                SizedBox(width: 15.w),
+                            itemBuilder: (_, index) =>
+                                _trendingCardApi(state.trendingMovies[index]),
+                          ),
+                        ),
+                        SizedBox(height: 18.h),
 
-            return const SizedBox();
-          },
+                        _sectionTitle('Popular Movies'),
+                        SizedBox(height: 18.h),
+                        Column(
+                          children: state.movies
+                              .map(
+                                (movie) => Padding(
+                                  padding: EdgeInsets.only(bottom: 15.h),
+                                  child: _popularMovieTileApi(
+                                    context,
+                                    movie,
+                                    state.favoriteMovieIds.contains(movie.id),
+                                  ),
+                                ),
+                              )
+                              .toList(),
+                        ),
+                        SizedBox(height: 20.h),
+                        SizedBox(height: 30.h),
+                      ],
+                    ),
+                  ),
+                );
+              }
+
+              return const SizedBox();
+            },
+          ),
         ),
       ),
-    ),
     );
   }
 
@@ -346,19 +342,15 @@ class HomeView extends StatelessWidget {
                 child: BlocBuilder<FavoritesCubit, FavoritesState>(
                   builder: (context, state) {
                     final cubit = context.read<FavoritesCubit>();
-                    final movieMap = {
-                      'id': movie.id,
-                      'title': movie.title,
-                      'subtitle': movie.subtitle,
-                      'rating': movie.rating,
-                      'image': movie.imageAsset,
-                    };
-                    final isFav = cubit.isFavorite(movie.id);
+                    final movieMap = movie.toFavoriteMap();
+                    final isFav = cubit.isFavorite(movie.id.toString());
                     return GestureDetector(
                       onTap: () => cubit.toggleFavorite(movieMap),
                       child: Icon(
                         isFav ? Icons.favorite : Icons.favorite_border,
-                        color: isFav ? Colors.red : Colors.white.withValues(alpha: 0.7),
+                        color: isFav
+                            ? Colors.red
+                            : Colors.white.withValues(alpha: 0.7),
                         size: 18.r,
                       ),
                     );
@@ -371,19 +363,15 @@ class HomeView extends StatelessWidget {
                 child: BlocBuilder<FavoritesCubit, FavoritesState>(
                   builder: (context, state) {
                     final cubit = context.read<FavoritesCubit>();
-                    final movieMap = {
-                      'id': movie.id,
-                      'title': movie.title,
-                      'subtitle': movie.subtitle,
-                      'rating': movie.rating,
-                      'image': movie.imageAsset,
-                    };
-                    final isInList = cubit.isInWatchlist(movie.id);
+                    final movieMap = movie.toFavoriteMap();
+                    final isInList = cubit.isInWatchlist(movie.id.toString());
                     return GestureDetector(
                       onTap: () => cubit.toggleWatchlist(movieMap),
                       child: Icon(
                         isInList ? Icons.bookmark : Icons.bookmark_border,
-                        color: isInList ? Colors.yellow : Colors.white.withValues(alpha: 0.7),
+                        color: isInList
+                            ? Colors.yellow
+                            : Colors.white.withValues(alpha: 0.7),
                         size: 18.r,
                       ),
                     );

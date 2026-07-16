@@ -2,8 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:movie_verse_app/core/constants/constants.dart';
-import 'package:movie_verse_app/core/data/models/movie.dart';
-import 'package:movie_verse_app/core/data/static/static_data.dart';
 import 'package:movie_verse_app/core/data/providers.dart';
 import 'package:movie_verse_app/features/favourites/presentation/cubits/favorites_cubit.dart';
 import 'package:go_router/go_router.dart';
@@ -165,6 +163,7 @@ class SearchView extends StatelessWidget {
           },
         ),
       ),
+      ),
     );
   }
 
@@ -212,7 +211,6 @@ class SearchView extends StatelessWidget {
           ],
         ),
       ),
-    ),
     );
   }
 
@@ -304,21 +302,14 @@ class SearchView extends StatelessWidget {
                     ),
                   ),
                 ),
-              ),
-              Positioned(
-                top: 8.h,
-                right: 8.w,
-                child: BlocBuilder<FavoritesCubit, FavoritesState>(
-                  builder: (context, state) {
-                    final cubit = context.read<FavoritesCubit>();
-                    final movieMap = {
-                      'id': movie.id,
-                      'title': movie.title,
-                      'subtitle': movie.subtitle,
-                      'rating': movie.rating,
-                      'image': movie.imageAsset,
-                    };
-                    final isFav = cubit.isFavorite(movie.id);
+                Positioned(
+                  top: 8.h,
+                  right: 8.w,
+                  child: BlocBuilder<FavoritesCubit, FavoritesState>(
+                    builder: (context, state) {
+                      final cubit = context.read<FavoritesCubit>();
+                      final movieMap = movie.toFavoriteMap();
+                      final isFav = cubit.isFavorite(movie.id.toString());
                     return GestureDetector(
                       onTap: () => cubit.toggleFavorite(movieMap),
                       child: Icon(
@@ -329,21 +320,15 @@ class SearchView extends StatelessWidget {
                     );
                   },
                 ),
-              ),
-              Positioned(
-                bottom: 8.h,
-                right: 8.w,
-                child: BlocBuilder<FavoritesCubit, FavoritesState>(
-                  builder: (context, state) {
-                    final cubit = context.read<FavoritesCubit>();
-                    final movieMap = {
-                      'id': movie.id,
-                      'title': movie.title,
-                      'subtitle': movie.subtitle,
-                      'rating': movie.rating,
-                      'image': movie.imageAsset,
-                    };
-                    final isInList = cubit.isInWatchlist(movie.id);
+                ),
+                Positioned(
+                  bottom: 8.h,
+                  right: 8.w,
+                  child: BlocBuilder<FavoritesCubit, FavoritesState>(
+                    builder: (context, state) {
+                      final cubit = context.read<FavoritesCubit>();
+                      final movieMap = movie.toFavoriteMap();
+                      final isInList = cubit.isInWatchlist(movie.id.toString());
                     return GestureDetector(
                       onTap: () => cubit.toggleWatchlist(movieMap),
                       child: Icon(
@@ -354,8 +339,9 @@ class SearchView extends StatelessWidget {
                     );
                   },
                 ),
-              ),
-            ],
+                ),
+              ],
+            ),
           ),
           SizedBox(height: 10.h),
           Text(

@@ -8,6 +8,7 @@ import 'package:movie_verse_app/features/auth/presentation/views/forgot_password
 import 'package:movie_verse_app/features/auth/presentation/views/sign_in_view.dart';
 import 'package:movie_verse_app/features/auth/presentation/views/sign_up_view.dart';
 import 'package:movie_verse_app/features/auth/presentation/views/splash_view.dart';
+import 'package:movie_verse_app/features/favourites/presentation/views/favourites_view.dart';
 import 'package:movie_verse_app/features/home/data/repos/home_repo_impl.dart';
 import 'package:movie_verse_app/features/home/presentation/cubits/home_cubit.dart';
 import 'package:movie_verse_app/features/home/presentation/views/home_view.dart';
@@ -18,7 +19,6 @@ import 'package:movie_verse_app/features/search/data/repos/search_repo_impl.dart
 import 'package:movie_verse_app/features/search/presentation/cubits/search_cubit.dart';
 import 'package:movie_verse_app/features/search/presentation/views/search_view.dart';
 import 'package:movie_verse_app/features/watchlist/presentation/views/watchlist_view.dart';
-import 'package:movie_verse_app/features/favourites/presentation/views/favourites_view.dart';
 
 abstract class AppRouter {
   static const kSplashView = '/';
@@ -122,7 +122,12 @@ abstract class AppRouter {
             routes: [
               GoRoute(
                 path: kExplore,
-                builder: (context, state) => const SearchView(),
+                builder: (context, state) => BlocProvider(
+                  create: (context) =>
+                      SearchCubit(SearchRepoImpl(ApiService()))
+                        ..loadSearchData(),
+                  child: const SearchView(),
+                ),
               ),
             ],
           ),
@@ -131,8 +136,16 @@ abstract class AppRouter {
             routes: [
               GoRoute(
                 path: kWatchlist,
-                builder: (context, state) =>
-                    const TabPlaceholder(title: 'Watchlist'),
+                builder: (context, state) => const WatchlistView(),
+              ),
+            ],
+          ),
+
+          StatefulShellBranch(
+            routes: [
+              GoRoute(
+                path: kFavorites,
+                builder: (context, state) => const FavouritesView(),
               ),
             ],
           ),
