@@ -33,7 +33,9 @@ class MovieDetailsView extends StatelessWidget {
         BlocProvider.value(value: favoritesCubit),
         BlocProvider(
           create: (context) {
-            final cubit = MovieDetailsCubit(MovieDetailsRepoImpl(apiService: ApiService()));
+            final cubit = MovieDetailsCubit(
+              MovieDetailsRepoImpl(apiService: ApiService()),
+            );
             cubit.getMovieDetails(movieId: movieId);
             // تحديث حالة الإشارة المرجعية عند تحميل البيانات
             WidgetsBinding.instance.addPostFrameCallback((_) {
@@ -81,7 +83,6 @@ class MovieDetailsView extends StatelessWidget {
 
             final successState = state as MovieDetailsSuccess;
             final movie = successState.movieDetailsModel;
-            final isFavorite = successState.isFavorite;
             final isBookmarked = successState.isBookmarked;
 
             return Stack(
@@ -199,13 +200,16 @@ class MovieDetailsView extends StatelessWidget {
                   // HEART / FAVORITE ICON
                   BlocBuilder<FavoritesCubit, FavoritesState>(
                     builder: (context, state) {
-                      final isFav = favoritesCubit.isFavorite(movie.id.toString());
+                      final isFav = favoritesCubit.isFavorite(
+                        movie.id.toString(),
+                      );
                       final movieMap = {
                         'id': movie.id.toString(),
                         'title': movie.title,
-                        'subtitle': movie.releaseDate ?? '',
+                        'subtitle': movie.releaseDate,
                         'rating': movie.voteAverage.toStringAsFixed(1),
-                        'image': 'https://image.tmdb.org/t/p/w500${movie.posterPath}',
+                        'image':
+                            'https://image.tmdb.org/t/p/w500${movie.posterPath}',
                       };
                       return _circleIcon(
                         isFav ? Icons.favorite : Icons.favorite_border,
@@ -221,11 +225,14 @@ class MovieDetailsView extends StatelessWidget {
                       final movieMap = {
                         'id': movie.id.toString(),
                         'title': movie.title,
-                        'subtitle': movie.releaseDate ?? '',
+                        'subtitle': movie.releaseDate,
                         'rating': movie.voteAverage.toStringAsFixed(1),
-                        'image': 'https://image.tmdb.org/t/p/w500${movie.posterPath}',
+                        'image':
+                            'https://image.tmdb.org/t/p/w500${movie.posterPath}',
                       };
-                      final isInWatchlist = cubit.isInWatchlist(movie.id.toString());
+                      final isInWatchlist = cubit.isInWatchlist(
+                        movie.id.toString(),
+                      );
                       return _circleIcon(
                         isInWatchlist ? Icons.bookmark : Icons.bookmark_border,
                         onTap: () => cubit.toggleWatchlist(movieMap),
@@ -278,13 +285,13 @@ class MovieDetailsView extends StatelessWidget {
                 children: [
                   Row(
                     children: [
-                      ...List.generate(5, (index) {
+                      ...List.generate(10, (index) {
                         return Icon(
                           index < review.rating.round()
                               ? Icons.star
                               : Icons.star_outline,
                           color: kButtonsColor,
-                          size: 20.sp,
+                          size: 16.sp,
                         );
                       }),
                       SizedBox(width: 8.w),

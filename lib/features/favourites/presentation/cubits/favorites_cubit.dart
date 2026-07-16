@@ -152,6 +152,32 @@ class FavoritesCubit extends Cubit<FavoritesState> {
     await _watchRef.doc(id).delete(); // Firestore update happens after
   }
 
+  Future<void> addToWatched(Map<String, dynamic> item) async {
+    final docId = item['id'].toString();
+
+    _watchlist.removeWhere((e) => e['id'] == docId);
+    _watched.removeWhere((e) => e['id'] == docId);
+    _watched.add({...item, 'id': docId});
+
+    emit(FavoritesUpdated(
+      favorites: List.from(_favorites),
+      watchlist: List.from(_watchlist),
+      watched: List.from(_watched),
+    ));
+
+    final watchDoc = await _watchRef.doc(docId).get();
+    if (watchDoc.exists) {
+      await _watchRef.doc(docId).delete();
+    }
+
+    await _watchedRef.doc(docId).set({
+      'title': item['title'],
+      'subtitle': item['subtitle'],
+      'rating': item['rating'],
+      'image': item['image'],
+    });
+  }
+
   Future<void> moveToWatched(Map<String, dynamic> item) async {
     final docId = item['id'].toString();
     

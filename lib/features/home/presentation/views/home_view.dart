@@ -116,8 +116,10 @@ class HomeView extends StatelessWidget {
                             itemCount: state.trendingMovies.length,
                             separatorBuilder: (_, index) =>
                                 SizedBox(width: 15.w),
-                            itemBuilder: (_, index) =>
-                                _trendingCardApi(state.trendingMovies[index]),
+                            itemBuilder: (_, index) => _trendingCardApi(
+                              context,
+                              state.trendingMovies[index],
+                            ),
                           ),
                         ),
                         SizedBox(height: 18.h),
@@ -294,17 +296,20 @@ class HomeView extends StatelessWidget {
     );
   }
 
-  Widget _trendingCardApi(MovieModel movie) {
+  Widget _trendingCardApi(BuildContext context, MovieModel movie) {
     final releaseYear = movie.releaseDate.length >= 4
         ? movie.releaseDate.substring(0, 4)
         : movie.releaseDate;
-    return Container(
-      width: 150.w,
-      decoration: BoxDecoration(
-        color: kCardColor,
-        borderRadius: BorderRadius.circular(22.r),
-      ),
-      child: Column(
+    return GestureDetector(
+      onTap: () =>
+          context.push(AppRouter.movieDetailsPath(movie.id.toString())),
+      child: Container(
+        width: 150.w,
+        decoration: BoxDecoration(
+          color: kCardColor,
+          borderRadius: BorderRadius.circular(22.r),
+        ),
+        child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Stack(
@@ -415,6 +420,7 @@ class HomeView extends StatelessWidget {
             ),
           ),
         ],
+        ),
       ),
     );
   }

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:movie_verse_app/core/constants/constants.dart';
+import 'package:movie_verse_app/core/data/providers.dart';
 import 'package:movie_verse_app/widgets/movie_card.dart';
 import 'package:movie_verse_app/widgets/rating_card.dart';
 import 'package:movie_verse_app/features/movie_details/data/models/movie_details_model.dart';
@@ -89,14 +90,21 @@ class _ReviewPageState extends State<ReviewRatingScreen> {
             setState(() => _applyExistingReview(state.review!));
           } else if (state is ReviewSubmitted) {
             setState(() => _isSubmitting = false);
+            final watchedItem = {
+              ...widget.movie.toFavoriteMap(),
+              'rating': _rating.toStringAsFixed(1),
+            };
+            favoritesCubit.addToWatched(watchedItem);
             ScaffoldMessenger.of(context).showSnackBar(
               const SnackBar(
-                content: Text('Review submitted successfully!'),
+                content: Text(
+                  'Review submitted and added to your watched list!',
+                ),
                 backgroundColor: Colors.green,
                 behavior: SnackBarBehavior.floating,
               ),
             );
-            Navigator.pop(context); // Close page after success
+            Navigator.pop(context);
           } else if (state is ReviewError) {
             setState(() => _isSubmitting = false);
             // Displays a dialog on screen if Firebase returns an error
@@ -214,6 +222,18 @@ class _ReviewPageState extends State<ReviewRatingScreen> {
                                     const SnackBar(
                                       content: Text(
                                         'You must be logged in to submit a review.',
+                                      ),
+                                      backgroundColor: Colors.red,
+                                    ),
+                                  );
+                                  return;
+                                }
+
+                                if (_rating <= 0) {
+                                  ScaffoldMessenger.of(context).showSnackBar(
+                                    const SnackBar(
+                                      content: Text(
+                                        'Please select a rating before submitting.',
                                       ),
                                       backgroundColor: Colors.red,
                                     ),
