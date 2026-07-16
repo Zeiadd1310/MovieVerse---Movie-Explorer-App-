@@ -15,6 +15,10 @@ import 'package:movie_verse_app/features/home/presentation/views/home_view.dart'
 import 'package:movie_verse_app/features/layout/main_layout.dart';
 import 'package:movie_verse_app/features/movie_details/presentation/views/movie_details_view.dart';
 import 'package:movie_verse_app/features/movie_details/presentation/views/review_rating_screen.dart';
+import 'package:movie_verse_app/features/profile/presentation/views/edit_profile_view.dart';
+import 'package:movie_verse_app/features/profile/presentation/views/notifications_view.dart';
+import 'package:movie_verse_app/features/profile/presentation/views/privacy_view.dart';
+import 'package:movie_verse_app/features/profile/presentation/views/profile_view.dart';
 import 'package:movie_verse_app/features/search/data/repos/search_repo_impl.dart';
 import 'package:movie_verse_app/features/search/presentation/cubits/search_cubit.dart';
 import 'package:movie_verse_app/features/search/presentation/views/search_view.dart';
@@ -36,6 +40,12 @@ abstract class AppRouter {
 
   static String reviewRatingPath([String movieId = 'interstellar']) =>
       '${movieDetailsPath(movieId)}/review';
+
+  static String editProfilePath() => '$kProfile/edit';
+
+  static String notificationsPath() => '$kProfile/notifications';
+
+  static String privacyPath() => '$kProfile/privacy';
 
   static final _authRefresh = GoRouterRefreshStream(
     FirebaseAuth.instance.authStateChanges(),
@@ -155,8 +165,21 @@ abstract class AppRouter {
             routes: [
               GoRoute(
                 path: kProfile,
-                builder: (context, state) =>
-                    const TabPlaceholder(title: 'Profile'),
+                builder: (context, state) => const ProfileView(),
+                routes: [
+                  GoRoute(
+                    path: 'edit',
+                    builder: (context, state) => const EditProfileView(),
+                  ),
+                  GoRoute(
+                    path: 'notifications',
+                    builder: (context, state) => const NotificationsView(),
+                  ),
+                  GoRoute(
+                    path: 'privacy',
+                    builder: (context, state) => const PrivacyView(),
+                  ),
+                ],
               ),
             ],
           ),
