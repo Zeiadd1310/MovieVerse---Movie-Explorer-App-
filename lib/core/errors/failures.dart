@@ -47,7 +47,6 @@ class ServerFailure extends Failure {
           'SSL Certificate Error: The server\'s certificate is invalid or untrusted. Please check your connection or contact support.',
         );
       case DioExceptionType.transformTimeout:
-        // TODO: Handle this case.
         throw UnimplementedError();
     }
   }

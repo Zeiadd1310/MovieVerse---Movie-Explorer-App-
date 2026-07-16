@@ -22,10 +22,12 @@ class FavoritesCubit extends Cubit<FavoritesState> {
   bool isFavorite(String id) => _favorites.any((e) => e['id'] == id);
   bool isInWatchlist(String id) => _watchlist.any((e) => e['id'] == id);
 
-  void _emit() => emit(FavoritesUpdated(
-        favorites: List.from(_favorites),
-        watchlist: List.from(_watchlist),
-      ));
+  void _emit() => emit(
+    FavoritesUpdated(
+      favorites: List.from(_favorites),
+      watchlist: List.from(_watchlist),
+    ),
+  );
 
   void toggleFavorite(Map<String, dynamic> item) {
     final i = _favorites.indexWhere((e) => e['id'] == item['id']);

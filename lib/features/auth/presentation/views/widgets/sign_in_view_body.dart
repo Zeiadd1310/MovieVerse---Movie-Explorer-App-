@@ -242,7 +242,7 @@ class _SignInViewBodyState extends State<SignInViewBody> {
                                 color: kPrimaryColor,
                                 borderColor: const Color(
                                   0xffF1F5F9,
-                                ).withOpacity(0.1),
+                                ).withValues(alpha: 0.1),
                                 isLoading: isLoading,
                                 onTap: () => context
                                     .read<AuthCubit>()
@@ -271,7 +271,7 @@ class _SignInViewBodyState extends State<SignInViewBody> {
                                 color: kPrimaryColor,
                                 borderColor: const Color(
                                   0xffF1F5F9,
-                                ).withOpacity(0.1),
+                                ).withValues(alpha: 0.1),
                                 isLoading: isLoading,
                                 onTap: () => context
                                     .read<AuthCubit>()
@@ -301,9 +301,7 @@ class _SignInViewBodyState extends State<SignInViewBody> {
                   SizedBox(width: 4.w),
                   GestureDetector(
                     onTap: () {
-                      GoRouter.of(
-                        context,
-                      ).go(AppRouter.kSignUpView);
+                      GoRouter.of(context).go(AppRouter.kSignUpView);
                     },
                     child: Text(
                       'Sign Up',
