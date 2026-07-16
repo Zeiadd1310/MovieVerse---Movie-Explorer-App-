@@ -15,16 +15,20 @@ import 'package:movie_verse_app/features/home/presentation/views/home_view.dart'
 import 'package:movie_verse_app/features/layout/main_layout.dart';
 import 'package:movie_verse_app/features/movie_details/presentation/views/movie_details_view.dart';
 import 'package:movie_verse_app/features/movie_details/presentation/views/review_rating_screen.dart';
+import 'package:movie_verse_app/features/profile/presentation/views/edit_profile_view.dart';
+import 'package:movie_verse_app/features/profile/presentation/views/notifications_view.dart';
+import 'package:movie_verse_app/features/profile/presentation/views/privacy_view.dart';
+import 'package:movie_verse_app/features/profile/presentation/views/profile_view.dart';
 import 'package:movie_verse_app/features/search/data/repos/search_repo_impl.dart';
 import 'package:movie_verse_app/features/search/presentation/cubits/search_cubit.dart';
 import 'package:movie_verse_app/features/search/presentation/views/search_view.dart';
 import 'package:movie_verse_app/features/movie_details/data/models/movie_details_model.dart';
 import 'package:movie_verse_app/features/watchlist/presentation/views/watchlist_view.dart';
 
-
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:movie_verse_app/features/movie_details/data/repos/review_repo_impl.dart';
 import 'package:movie_verse_app/features/movie_details/presentation/cubits/review_cubit.dart';
+
 abstract class AppRouter {
   static const kSplashView = '/';
   static const kSignUpView = '/signUpView';
@@ -35,6 +39,9 @@ abstract class AppRouter {
   static const kWatchlist = '/watchlist';
   static const kFavorites = '/favorites';
   static const kProfile = '/profile';
+  static const kEditProfile = 'edit-profile';
+  static const kNotifications = 'notifications';
+  static const kPrivacy = 'privacy';
 
   static String movieDetailsPath([String movieId = 'interstellar']) =>
       '$kMainLayout/movie/$movieId';
@@ -42,14 +49,19 @@ abstract class AppRouter {
   static String reviewRatingPath([String movieId = 'interstellar']) =>
       '${movieDetailsPath(movieId)}/review';
 
-  static final _authRefresh =
-      GoRouterRefreshStream(FirebaseAuth.instance.authStateChanges());
+  static final _authRefresh = GoRouterRefreshStream(
+    FirebaseAuth.instance.authStateChanges(),
+  );
 
   static bool _isAuthRoute(String location) {
     return location == kSignInView ||
         location == kSignUpView ||
         location == kForgotPasswordView;
   }
+
+  static String editProfilePath() => '$kProfile/$kEditProfile';
+  static String notificationsPath() => '$kProfile/$kNotifications';
+  static String privacyPath() => '$kProfile/$kPrivacy';
 
   static final router = GoRouter(
     initialLocation: kSplashView,
@@ -113,22 +125,20 @@ abstract class AppRouter {
                     builder: (context, state) => const MovieDetailsView(),
                     routes: [
                       GoRoute(
-  path: 'review',
- builder: (context, state) {
-  final movie = state.extra as MovieDetailsModel;
+                        path: 'review',
+                        builder: (context, state) {
+                          final movie = state.extra as MovieDetailsModel;
 
-  return BlocProvider(
-    create: (_) => ReviewCubit(
-      ReviewRepoImpl(
-        firestore: FirebaseFirestore.instance,
-      ),
-    ),
-    child: ReviewRatingScreen(
-      movie: movie,
-    ),
-  );
-},
-),
+                          return BlocProvider(
+                            create: (_) => ReviewCubit(
+                              ReviewRepoImpl(
+                                firestore: FirebaseFirestore.instance,
+                              ),
+                            ),
+                            child: ReviewRatingScreen(movie: movie),
+                          );
+                        },
+                      ),
                     ],
                   ),
                 ],
@@ -172,8 +182,21 @@ abstract class AppRouter {
             routes: [
               GoRoute(
                 path: kProfile,
-                builder: (context, state) =>
-                    const TabPlaceholder(title: 'Profile'),
+                builder: (context, state) => const ProfileView(),
+                routes: [
+                  GoRoute(
+                    path: kEditProfile,
+                    builder: (context, state) => const EditProfileView(),
+                  ),
+                  GoRoute(
+                    path: kNotifications,
+                    builder: (context, state) => const NotificationsView(),
+                  ),
+                  GoRoute(
+                    path: kPrivacy,
+                    builder: (context, state) => const PrivacyView(),
+                  ),
+                ],
               ),
             ],
           ),
