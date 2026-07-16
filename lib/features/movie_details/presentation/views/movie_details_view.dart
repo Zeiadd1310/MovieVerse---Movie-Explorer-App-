@@ -32,9 +32,15 @@ class MovieDetailsView extends StatelessWidget {
       providers: [
         BlocProvider.value(value: favoritesCubit),
         BlocProvider(
-          create: (context) =>
-              MovieDetailsCubit(MovieDetailsRepoImpl(apiService: ApiService()))
-                ..getMovieDetails(movieId: movieId),
+          create: (context) {
+            final cubit = MovieDetailsCubit(MovieDetailsRepoImpl(apiService: ApiService()));
+            cubit.getMovieDetails(movieId: movieId);
+            // تحديث حالة الإشارة المرجعية عند تحميل البيانات
+            WidgetsBinding.instance.addPostFrameCallback((_) {
+              favoritesCubit.loadData();
+            });
+            return cubit;
+          },
         ),
         BlocProvider(
           create: (context) {
@@ -209,10 +215,22 @@ class MovieDetailsView extends StatelessWidget {
                   ),
                   SizedBox(width: 15.w),
                   // BOOKMARK ICON (Share icon has been completely removed)
-                  _circleIcon(
-                    isBookmarked ? Icons.bookmark : Icons.bookmark_border,
-                    onTap: () =>
-                        context.read<MovieDetailsCubit>().toggleBookmark(),
+                  BlocBuilder<FavoritesCubit, FavoritesState>(
+                    builder: (context, state) {
+                      final cubit = context.read<FavoritesCubit>();
+                      final movieMap = {
+                        'id': movie.id.toString(),
+                        'title': movie.title,
+                        'subtitle': movie.releaseDate ?? '',
+                        'rating': movie.voteAverage.toStringAsFixed(1),
+                        'image': 'https://image.tmdb.org/t/p/w500${movie.posterPath}',
+                      };
+                      final isInWatchlist = cubit.isInWatchlist(movie.id.toString());
+                      return _circleIcon(
+                        isInWatchlist ? Icons.bookmark : Icons.bookmark_border,
+                        onTap: () => cubit.toggleWatchlist(movieMap),
+                      );
+                    },
                   ),
                 ],
               ),
