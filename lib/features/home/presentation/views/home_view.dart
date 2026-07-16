@@ -1,4 +1,5 @@
-﻿import 'package:flutter/material.dart';
+
+import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:go_router/go_router.dart';
@@ -85,6 +86,11 @@ class HomeView extends StatelessWidget {
                         SizedBox(height: 15.h),
                         SingleChildScrollView(
                           scrollDirection: Axis.horizontal,
+                          itemCount: state.trendingMovies.length,
+                          separatorBuilder: (_, index) => SizedBox(width: 15.w),
+                          itemBuilder: (_, index) =>
+                              // Pass the context to the trending card
+                              _trendingCardApi(context, state.trendingMovies[index]),
                           child: Row(
                             children: [
                               for (final genre in state.genres)
@@ -780,6 +786,7 @@ class HomeView extends StatelessWidget {
     );
   }
 
+  // UPDATED: Added BuildContext parameter & wrapped in a GestureDetector
   Widget _trendingCardApi(BuildContext context, MovieModel movie) {
     final releaseYear = movie.releaseDate.length >= 4
         ? movie.releaseDate.substring(0, 4)
@@ -799,8 +806,7 @@ class HomeView extends StatelessWidget {
             Stack(
               children: [
                 ClipRRect(
-                  borderRadius:
-                      BorderRadius.vertical(top: Radius.circular(22.r)),
+                  borderRadius: BorderRadius.vertical(top: Radius.circular(22.r)),
                   child: Image.network(
                     'https://image.tmdb.org/t/p/w500${movie.posterPath}',
                     height: 200.h,
@@ -818,8 +824,7 @@ class HomeView extends StatelessWidget {
                   top: 10.h,
                   right: 10.w,
                   child: Container(
-                    padding:
-                        EdgeInsets.symmetric(horizontal: 8.w, vertical: 4.h),
+                    padding: EdgeInsets.symmetric(horizontal: 8.w, vertical: 4.h),
                     decoration: BoxDecoration(
                       color: kButtonsColor,
                       borderRadius: BorderRadius.circular(20.r),
@@ -902,7 +907,7 @@ class HomeView extends StatelessWidget {
             ),
             SizedBox(width: 14.w),
             Expanded(
-              child: Column(
+              child: Column(    
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
@@ -939,4 +944,5 @@ class HomeView extends StatelessWidget {
       ),
     );
   }
-}*/
+}
+

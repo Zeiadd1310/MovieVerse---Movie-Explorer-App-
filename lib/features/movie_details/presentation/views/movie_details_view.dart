@@ -119,7 +119,11 @@ return MultiBlocProvider(
                     ],
                   ),
                 ),
-                _buildFloatingWatchButton(context, movieIdParam ?? ''),
+                _buildFloatingWatchButton(
+                  context,
+                  movieIdParam ?? '',
+                  movie,
+                ),
               ],
             );
           },
@@ -153,7 +157,7 @@ return MultiBlocProvider(
               begin: Alignment.topCenter,
               end: Alignment.bottomCenter,
               colors: [
-                Colors.black.withValues(alpha: 0.3),
+                Colors.black.withOpacity(0.3),
                 Colors.transparent,
                 kDetailsBackground,
               ],
@@ -170,6 +174,19 @@ return MultiBlocProvider(
               _circleIcon(Icons.arrow_back, onTap: () => context.pop()),
               Row(
                 children: [
+                  // HEART / FAVORITE ICON
+                  _circleIcon(
+                    isFavorite ? Icons.favorite : Icons.favorite_border,
+                    onTap: () =>
+                        context.read<MovieDetailsCubit>().toggleFavorite(),
+                  ),
+                  SizedBox(width: 15.w),
+                  // BOOKMARK ICON (Share icon has been completely removed)
+                  _circleIcon(
+                    isBookmarked ? Icons.bookmark : Icons.bookmark_border,
+                    onTap: () =>
+                        context.read<MovieDetailsCubit>().toggleBookmark(),
+                  ),
                   _buildReactiveHeart(context, movie),
                   SizedBox(width: 15.w),
                   _circleIcon(Icons.share_outlined),
@@ -196,21 +213,10 @@ return MultiBlocProvider(
 
   Widget _buildCastSection(MovieDetailsModel movie) {
     return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            _sectionTitle('Top Cast'),
-            Text(
-              'See All',
-              style: GoogleFonts.inter(
-                color: kButtonsColor,
-                fontWeight: FontWeight.w700,
-                fontSize: 14.sp,
-              ),
-            ),
-          ],
-        ),
+        // "See All" completely removed
+        _sectionTitle('Top Cast'),
         SizedBox(height: 20.h),
         SingleChildScrollView(
           scrollDirection: Axis.horizontal,
@@ -221,6 +227,7 @@ return MultiBlocProvider(
       ],
     );
   }
+}
 
   Widget _circleIcon(IconData icon, {VoidCallback? onTap}) {
     return GestureDetector(
@@ -323,44 +330,54 @@ return MultiBlocProvider(
     );
   }
 
-  Widget _buildFloatingWatchButton(BuildContext context, String movieId) {
-    return Positioned(
-      bottom: 30.h,
-      left: 20.w,
-      right: 20.w,
-      child: GestureDetector(
-        onTap: () => context.push(AppRouter.reviewRatingPath(movieId)),
-        child: Container(
-          height: 60.h,
-          decoration: BoxDecoration(
-            color: kButtonsColor,
-            borderRadius: BorderRadius.circular(30.r),
-            boxShadow: [
-              BoxShadow(
-                color: kButtonsColor.withValues(alpha: 0.35),
-                blurRadius: 18,
-                offset: Offset(0, 10.h),
+Widget _buildFloatingWatchButton(
+  BuildContext context,
+  String movieId,
+  MovieDetailsModel movie,
+) {
+  return Positioned(
+    bottom: 30.h,
+    left: 20.w,
+    right: 20.w,
+    child: GestureDetector(
+      onTap: () => context.push(
+        AppRouter.reviewRatingPath(movieId),
+        extra: movie,
+      ),
+      child: Container(
+        height: 60.h,
+        decoration: BoxDecoration(
+          color: kButtonsColor,
+          borderRadius: BorderRadius.circular(30.r),
+          boxShadow: [
+            BoxShadow(
+              color: kButtonsColor.withValues(alpha: 0.35),
+              blurRadius: 18,
+              offset: Offset(0, 10.h),
+            ),
+          ],
+        ),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Icon(
+              Icons.play_arrow_outlined,
+              color: Colors.black,
+              size: 32.sp,
+            ),
+            SizedBox(width: 8.w),
+            Text(
+              'Add Review',
+              style: GoogleFonts.inter(
+                color: Colors.black,
+                fontWeight: FontWeight.w800,
+                fontSize: 18.sp,
+                letterSpacing: -0.5,
               ),
-            ],
-          ),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Icon(Icons.play_arrow_outlined, color: Colors.black, size: 32.sp),
-              SizedBox(width: 8.w),
-              Text(
-                'Add Review',
-                style: GoogleFonts.inter(
-                  color: Colors.black,
-                  fontWeight: FontWeight.w800,
-                  fontSize: 18.sp,
-                  letterSpacing: -0.5,
-                ),
-              ),
-            ],
-          ),
+            ),
+          ],
         ),
       ),
-    );
-  }
+    ),
+  );
 }
