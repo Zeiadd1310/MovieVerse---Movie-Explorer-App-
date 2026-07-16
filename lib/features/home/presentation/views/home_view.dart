@@ -484,12 +484,18 @@ class HomeView extends StatelessWidget {
                 ],
               ),
             ),
-            GestureDetector(
-              onTap: () => context.read<HomeCubit>().toggleFavorite(movie.id),
-              child: Icon(
-                isFavorite ? Icons.bookmark : Icons.bookmark_border,
-                color: kButtonsColor,
-              ),
+            BlocBuilder<FavoritesCubit, FavoritesState>(
+              builder: (context, state) {
+                final isInList = favoritesCubit.isInWatchlist(movie.id.toString());
+                return GestureDetector(
+                  onTap: () => favoritesCubit.toggleWatchlist(movie.toFavoriteMap()),
+                  child: Icon(
+                    isInList ? Icons.bookmark : Icons.bookmark_border,
+                    color: isInList ? kButtonsColor : kButtonsColor,
+                    size: 22.sp,
+                  ),
+                );
+              },
             ),
           ],
         ),

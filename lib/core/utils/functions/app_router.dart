@@ -8,7 +8,7 @@ import 'package:movie_verse_app/features/auth/presentation/views/forgot_password
 import 'package:movie_verse_app/features/auth/presentation/views/sign_in_view.dart';
 import 'package:movie_verse_app/features/auth/presentation/views/sign_up_view.dart';
 import 'package:movie_verse_app/features/auth/presentation/views/splash_view.dart';
-import 'package:movie_verse_app/features/favourites/presentation/views/favourites_view.dart';
+import 'package:movie_verse_app/features/favourites/presentation/views/favorites_view.dart';
 import 'package:movie_verse_app/features/home/data/repos/home_repo_impl.dart';
 import 'package:movie_verse_app/features/home/presentation/cubits/home_cubit.dart';
 import 'package:movie_verse_app/features/home/presentation/views/home_view.dart';

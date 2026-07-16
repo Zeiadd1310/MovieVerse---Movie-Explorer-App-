@@ -8,6 +8,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:movie_verse_app/core/constants/constants.dart';
 import 'package:movie_verse_app/core/data/providers.dart';
 import 'package:movie_verse_app/core/utils/functions/api_service.dart';
+import 'package:movie_verse_app/features/favourites/presentation/cubits/favorites_cubit.dart';
 import 'package:movie_verse_app/core/utils/functions/app_router.dart';
 import 'package:movie_verse_app/features/movie_details/data/models/movie_details_model.dart';
 import 'package:movie_verse_app/features/movie_details/data/repos/movie_details_repo_imp.dart';
@@ -83,7 +84,7 @@ class MovieDetailsView extends StatelessWidget {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      _buildHeader(context, movie, isFavorite, isBookmarked),
+                      _buildHeader(context, movie, isBookmarked),
                       Padding(
                         padding: EdgeInsets.symmetric(horizontal: 20.w),
                         child: Column(
@@ -153,7 +154,6 @@ class MovieDetailsView extends StatelessWidget {
   Widget _buildHeader(
     BuildContext context,
     MovieDetailsModel movie,
-    bool isFavorite,
     bool isBookmarked,
   ) {
     return Stack(
@@ -191,10 +191,21 @@ class MovieDetailsView extends StatelessWidget {
               Row(
                 children: [
                   // HEART / FAVORITE ICON
-                  _circleIcon(
-                    isFavorite ? Icons.favorite : Icons.favorite_border,
-                    onTap: () =>
-                        context.read<MovieDetailsCubit>().toggleFavorite(),
+                  BlocBuilder<FavoritesCubit, FavoritesState>(
+                    builder: (context, state) {
+                      final isFav = favoritesCubit.isFavorite(movie.id.toString());
+                      final movieMap = {
+                        'id': movie.id.toString(),
+                        'title': movie.title,
+                        'subtitle': movie.releaseDate ?? '',
+                        'rating': movie.voteAverage.toStringAsFixed(1),
+                        'image': 'https://image.tmdb.org/t/p/w500${movie.posterPath}',
+                      };
+                      return _circleIcon(
+                        isFav ? Icons.favorite : Icons.favorite_border,
+                        onTap: () => favoritesCubit.toggleFavorite(movieMap),
+                      );
+                    },
                   ),
                   SizedBox(width: 15.w),
                   // BOOKMARK ICON (Share icon has been completely removed)
