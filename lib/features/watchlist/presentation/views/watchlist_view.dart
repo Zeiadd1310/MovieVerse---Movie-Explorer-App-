@@ -117,7 +117,8 @@ class _WatchlistViewState extends State<WatchlistView>
               Expanded(
                 child: BlocBuilder<FavoritesCubit, FavoritesState>(
                   builder: (context, state) {
-                    if (state is FavoritesLoading || state is FavoritesInitial) {
+                    if (state is FavoritesLoading ||
+                        state is FavoritesInitial) {
                       return const Center(child: CircularProgressIndicator());
                     }
 
@@ -181,7 +182,8 @@ class _WatchlistViewState extends State<WatchlistView>
             ),
           ),
           child: GestureDetector(
-            onTap: () => context.push(AppRouter.movieDetailsPath(item['id'].toString())),
+            onTap: () =>
+                context.push(AppRouter.movieDetailsPath(item['id'].toString())),
             child: _buildRow(item, false),
           ),
         );
@@ -228,7 +230,8 @@ class _WatchlistViewState extends State<WatchlistView>
             ),
           ),
           child: GestureDetector(
-            onTap: () => context.push(AppRouter.movieDetailsPath(item['id'].toString())),
+            onTap: () =>
+                context.push(AppRouter.movieDetailsPath(item['id'].toString())),
             child: _buildRow(item, true),
           ),
         );
@@ -262,12 +265,16 @@ class _WatchlistViewState extends State<WatchlistView>
               right: 2.w,
               child: BlocBuilder<FavoritesCubit, FavoritesState>(
                 builder: (context, state) {
-                  final isFav = favoritesCubit.isFavorite(item['id'].toString());
+                  final isFav = favoritesCubit.isFavorite(
+                    item['id'].toString(),
+                  );
                   return GestureDetector(
                     onTap: () => favoritesCubit.toggleFavorite(item),
                     child: Icon(
                       isFav ? Icons.favorite : Icons.favorite_border,
-                      color: isFav ? Colors.red : Colors.white.withValues(alpha: 0.7),
+                      color: isFav
+                          ? Colors.red
+                          : Colors.white.withValues(alpha: 0.7),
                       size: 14.r,
                     ),
                   );
@@ -294,10 +301,7 @@ class _WatchlistViewState extends State<WatchlistView>
               SizedBox(height: 4.h),
               Text(
                 item['subtitle'] as String,
-                style: GoogleFonts.poppins(
-                  color: kSlateText,
-                  fontSize: 14.sp,
-                ),
+                style: GoogleFonts.poppins(color: kSlateText, fontSize: 14.sp),
                 overflow: TextOverflow.ellipsis,
                 maxLines: 1,
               ),
@@ -335,7 +339,10 @@ class _WatchlistViewState extends State<WatchlistView>
                     favoritesCubit.moveToWatched(item);
                   },
                   child: Container(
-                    padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 8.h),
+                    padding: EdgeInsets.symmetric(
+                      horizontal: 16.w,
+                      vertical: 8.h,
+                    ),
                     decoration: BoxDecoration(
                       color: kButtonsColor,
                       borderRadius: BorderRadius.circular(8.r),
@@ -352,7 +359,10 @@ class _WatchlistViewState extends State<WatchlistView>
                 )
               else
                 Container(
-                  padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 8.h),
+                  padding: EdgeInsets.symmetric(
+                    horizontal: 16.w,
+                    vertical: 8.h,
+                  ),
                   decoration: BoxDecoration(
                     color: const Color(0xFF4CAF50),
                     borderRadius: BorderRadius.circular(8.r),
@@ -385,11 +395,7 @@ class _WatchlistViewState extends State<WatchlistView>
               color: const Color(0xFF0B050F),
               shape: BoxShape.circle,
             ),
-            child: Icon(
-              Icons.delete_outline,
-              color: Colors.white,
-              size: 20.r,
-            ),
+            child: Icon(Icons.delete_outline, color: Colors.white, size: 20.r),
           ),
         ),
       ],

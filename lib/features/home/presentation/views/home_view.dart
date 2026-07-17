@@ -70,10 +70,14 @@ class HomeView extends StatelessWidget {
                               children: [
                                 _iconButton(
                                   Icons.search,
-                                  onTap: () => context.push(AppRouter.kExplore),
+                                  onTap: () => context.go(AppRouter.kExplore),
                                 ),
                                 SizedBox(width: 10.w),
-                                _iconButton(Icons.notifications_none),
+                                _iconButton(
+                                  Icons.notifications_none,
+                                  onTap: () =>
+                                      context.go(AppRouter.notificationsPath()),
+                                ),
                               ],
                             ),
                           ],
@@ -310,116 +314,121 @@ class HomeView extends StatelessWidget {
           borderRadius: BorderRadius.circular(22.r),
         ),
         child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Stack(
-            children: [
-              ClipRRect(
-                borderRadius: BorderRadius.vertical(top: Radius.circular(22.r)),
-                child: Image.network(
-                  'https://image.tmdb.org/t/p/w500${movie.posterPath}',
-                  height: 200.h,
-                  width: double.infinity,
-                  fit: BoxFit.cover,
-                  errorBuilder: (_, _, _) => Container(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Stack(
+              children: [
+                ClipRRect(
+                  borderRadius: BorderRadius.vertical(
+                    top: Radius.circular(22.r),
+                  ),
+                  child: Image.network(
+                    'https://image.tmdb.org/t/p/w500${movie.posterPath}',
                     height: 200.h,
                     width: double.infinity,
-                    color: Colors.grey,
-                    child: const Icon(Icons.movie),
-                  ),
-                ),
-              ),
-              Positioned(
-                top: 10.h,
-                right: 10.w,
-                child: Container(
-                  padding: EdgeInsets.symmetric(horizontal: 8.w, vertical: 4.h),
-                  decoration: BoxDecoration(
-                    color: kButtonsColor,
-                    borderRadius: BorderRadius.circular(20.r),
-                  ),
-                  child: Text(
-                    movie.voteAverage.toStringAsFixed(1),
-                    style: TextStyle(
-                      fontSize: 10.sp,
-                      fontWeight: FontWeight.bold,
+                    fit: BoxFit.cover,
+                    errorBuilder: (_, _, _) => Container(
+                      height: 200.h,
+                      width: double.infinity,
+                      color: Colors.grey,
+                      child: const Icon(Icons.movie),
                     ),
                   ),
                 ),
-              ),
-              Positioned(
-                top: 8.h,
-                left: 8.w,
-                child: BlocBuilder<FavoritesCubit, FavoritesState>(
-                  builder: (context, state) {
-                    final cubit = context.read<FavoritesCubit>();
-                    final movieMap = movie.toFavoriteMap();
-                    final isFav = cubit.isFavorite(movie.id.toString());
-                    return GestureDetector(
-                      onTap: () => cubit.toggleFavorite(movieMap),
-                      child: Icon(
-                        isFav ? Icons.favorite : Icons.favorite_border,
-                        color: isFav
-                            ? Colors.red
-                            : Colors.white.withValues(alpha: 0.7),
-                        size: 18.r,
+                Positioned(
+                  top: 10.h,
+                  right: 10.w,
+                  child: Container(
+                    padding: EdgeInsets.symmetric(
+                      horizontal: 8.w,
+                      vertical: 4.h,
+                    ),
+                    decoration: BoxDecoration(
+                      color: kButtonsColor,
+                      borderRadius: BorderRadius.circular(20.r),
+                    ),
+                    child: Text(
+                      movie.voteAverage.toStringAsFixed(1),
+                      style: TextStyle(
+                        fontSize: 10.sp,
+                        fontWeight: FontWeight.bold,
                       ),
-                    );
-                  },
-                ),
-              ),
-              Positioned(
-                bottom: 8.h,
-                right: 8.w,
-                child: BlocBuilder<FavoritesCubit, FavoritesState>(
-                  builder: (context, state) {
-                    final cubit = context.read<FavoritesCubit>();
-                    final movieMap = movie.toFavoriteMap();
-                    final isInList = cubit.isInWatchlist(movie.id.toString());
-                    return GestureDetector(
-                      onTap: () => cubit.toggleWatchlist(movieMap),
-                      child: Icon(
-                        isInList ? Icons.bookmark : Icons.bookmark_border,
-                        color: isInList
-                            ? Colors.yellow
-                            : Colors.white.withValues(alpha: 0.7),
-                        size: 18.r,
-                      ),
-                    );
-                  },
-                ),
-              ),
-            ],
-          ),
-          Padding(
-            padding: EdgeInsets.all(10.r),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  maxLines: 1,
-                  overflow: TextOverflow.ellipsis,
-                  movie.title,
-                  style: TextStyle(
-                    color: Colors.white,
-                    fontWeight: FontWeight.w600,
-                    fontSize: 14.sp,
+                    ),
                   ),
                 ),
-                SizedBox(height: 5.h),
-                Text(
-                  releaseYear,
-                  style: TextStyle(
-                    color: Colors.grey.shade400,
-                    fontSize: 11.sp,
+                Positioned(
+                  top: 8.h,
+                  left: 8.w,
+                  child: BlocBuilder<FavoritesCubit, FavoritesState>(
+                    builder: (context, state) {
+                      final cubit = context.read<FavoritesCubit>();
+                      final movieMap = movie.toFavoriteMap();
+                      final isFav = cubit.isFavorite(movie.id.toString());
+                      return GestureDetector(
+                        onTap: () => cubit.toggleFavorite(movieMap),
+                        child: Icon(
+                          isFav ? Icons.favorite : Icons.favorite_border,
+                          color: isFav
+                              ? Colors.red
+                              : Colors.white.withValues(alpha: 0.7),
+                          size: 18.r,
+                        ),
+                      );
+                    },
                   ),
-                  maxLines: 1,
-                  overflow: TextOverflow.ellipsis,
+                ),
+                Positioned(
+                  bottom: 8.h,
+                  right: 8.w,
+                  child: BlocBuilder<FavoritesCubit, FavoritesState>(
+                    builder: (context, state) {
+                      final cubit = context.read<FavoritesCubit>();
+                      final movieMap = movie.toFavoriteMap();
+                      final isInList = cubit.isInWatchlist(movie.id.toString());
+                      return GestureDetector(
+                        onTap: () => cubit.toggleWatchlist(movieMap),
+                        child: Icon(
+                          isInList ? Icons.bookmark : Icons.bookmark_border,
+                          color: isInList
+                              ? Colors.yellow
+                              : Colors.white.withValues(alpha: 0.7),
+                          size: 18.r,
+                        ),
+                      );
+                    },
+                  ),
                 ),
               ],
             ),
-          ),
-        ],
+            Padding(
+              padding: EdgeInsets.all(10.r),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                    movie.title,
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontWeight: FontWeight.w600,
+                      fontSize: 14.sp,
+                    ),
+                  ),
+                  SizedBox(height: 5.h),
+                  Text(
+                    releaseYear,
+                    style: TextStyle(
+                      color: Colors.grey.shade400,
+                      fontSize: 11.sp,
+                    ),
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                ],
+              ),
+            ),
+          ],
         ),
       ),
     );
@@ -492,9 +501,12 @@ class HomeView extends StatelessWidget {
             ),
             BlocBuilder<FavoritesCubit, FavoritesState>(
               builder: (context, state) {
-                final isInList = favoritesCubit.isInWatchlist(movie.id.toString());
+                final isInList = favoritesCubit.isInWatchlist(
+                  movie.id.toString(),
+                );
                 return GestureDetector(
-                  onTap: () => favoritesCubit.toggleWatchlist(movie.toFavoriteMap()),
+                  onTap: () =>
+                      favoritesCubit.toggleWatchlist(movie.toFavoriteMap()),
                   child: Icon(
                     isInList ? Icons.bookmark : Icons.bookmark_border,
                     color: isInList ? kButtonsColor : kButtonsColor,

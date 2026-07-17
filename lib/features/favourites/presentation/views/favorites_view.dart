@@ -87,18 +87,14 @@ class _FavouritesViewState extends State<FavouritesView>
                     fontSize: 20.sp,
                     fontWeight: FontWeight.w400,
                   ),
-                  tabs: const [
-                    Tab(text: 'Movies'),
-                  ],
+                  tabs: const [Tab(text: 'Movies')],
                 ),
               ),
               SizedBox(height: 16.h),
               Expanded(
                 child: TabBarView(
                   controller: _tabController,
-                  children: [
-                    _buildMoviesList(),
-                  ],
+                  children: [_buildMoviesList()],
                 ),
               ),
             ],
@@ -130,7 +126,10 @@ class _FavouritesViewState extends State<FavouritesView>
                 SizedBox(height: 16.h),
                 Text(
                   'No favorites yet',
-                  style: GoogleFonts.poppins(color: kSlateText, fontSize: 16.sp),
+                  style: GoogleFonts.poppins(
+                    color: kSlateText,
+                    fontSize: 16.sp,
+                  ),
                 ),
               ],
             ),
@@ -164,110 +163,115 @@ class _FavouritesViewState extends State<FavouritesView>
         child: Icon(Icons.delete_outline, color: Colors.redAccent, size: 24.r),
       ),
       child: GestureDetector(
-        onTap: () => context.push(AppRouter.movieDetailsPath(item['id'].toString())),
+        onTap: () =>
+            context.push(AppRouter.movieDetailsPath(item['id'].toString())),
         child: Container(
-        margin: EdgeInsets.symmetric(vertical: 4.h),
-        padding: EdgeInsets.all(12.w),
-        decoration: BoxDecoration(
-          color: const Color(0xFF171A21),
-          borderRadius: BorderRadius.all(Radius.circular(48.r)),
-        ),
-        child: Row(
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: [
-            ClipRRect(
-              borderRadius: BorderRadius.circular(10.r),
-              child: Image.network(
-                item['image'] as String? ?? '',
-                width: 90.w,
-                height: 120.h,
-                fit: BoxFit.cover,
-                errorBuilder: (context, error, stackTrace) => Container(
+          margin: EdgeInsets.symmetric(vertical: 4.h),
+          padding: EdgeInsets.all(12.w),
+          decoration: BoxDecoration(
+            color: const Color(0xFF171A21),
+            borderRadius: BorderRadius.all(Radius.circular(48.r)),
+          ),
+          child: Row(
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              ClipRRect(
+                borderRadius: BorderRadius.circular(10.r),
+                child: Image.network(
+                  item['image'] as String? ?? '',
                   width: 90.w,
                   height: 120.h,
-                  color: const Color(0xFF1E232C),
-                  child: Icon(Icons.movie, color: Colors.grey, size: 30.r),
+                  fit: BoxFit.cover,
+                  errorBuilder: (context, error, stackTrace) => Container(
+                    width: 90.w,
+                    height: 120.h,
+                    color: const Color(0xFF1E232C),
+                    child: Icon(Icons.movie, color: Colors.grey, size: 30.r),
+                  ),
                 ),
               ),
-            ),
-            SizedBox(width: 16.w),
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Text(
-                    item['title'] as String,
-                    style: GoogleFonts.poppins(
-                      color: Colors.white,
-                      fontSize: 16.sp,
-                      fontWeight: FontWeight.w700,
-                    ),
-                    overflow: TextOverflow.ellipsis,
-                    maxLines: 1,
-                  ),
-                  SizedBox(height: 6.h),
-                  Text(
-                    item['subtitle'] as String,
-                    style: GoogleFonts.poppins(
-                      color: const Color(0xFF94A3B8),
-                      fontSize: 12.sp,
-                    ),
-                    overflow: TextOverflow.ellipsis,
-                    maxLines: 1,
-                  ),
-                  SizedBox(height: 6.h),
-                  Row(
-                    children: [
-                      Icon(Icons.star, color: kButtonsColor, size: 12.r),
-                      SizedBox(width: 4.w),
-                      Text(
-                        item['rating'] as String,
-                        style: GoogleFonts.poppins(
-                          color: kButtonsColor,
-                          fontSize: 11.sp,
-                          fontWeight: FontWeight.w600,
-                        ),
+              SizedBox(width: 16.w),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Text(
+                      item['title'] as String,
+                      style: GoogleFonts.poppins(
+                        color: Colors.white,
+                        fontSize: 16.sp,
+                        fontWeight: FontWeight.w700,
                       ),
-                      if (item['duration'] != null) ...[
-                        SizedBox(width: 12.w),
-                        Icon(Icons.access_time, color: kSlateText, size: 12.r),
+                      overflow: TextOverflow.ellipsis,
+                      maxLines: 1,
+                    ),
+                    SizedBox(height: 6.h),
+                    Text(
+                      item['subtitle'] as String,
+                      style: GoogleFonts.poppins(
+                        color: const Color(0xFF94A3B8),
+                        fontSize: 12.sp,
+                      ),
+                      overflow: TextOverflow.ellipsis,
+                      maxLines: 1,
+                    ),
+                    SizedBox(height: 6.h),
+                    Row(
+                      children: [
+                        Icon(Icons.star, color: kButtonsColor, size: 12.r),
                         SizedBox(width: 4.w),
                         Text(
-                          item['duration'] as String,
+                          item['rating'] as String,
                           style: GoogleFonts.poppins(
-                            color: kSlateText,
+                            color: kButtonsColor,
                             fontSize: 11.sp,
+                            fontWeight: FontWeight.w600,
                           ),
                         ),
+                        if (item['duration'] != null) ...[
+                          SizedBox(width: 12.w),
+                          Icon(
+                            Icons.access_time,
+                            color: kSlateText,
+                            size: 12.r,
+                          ),
+                          SizedBox(width: 4.w),
+                          Text(
+                            item['duration'] as String,
+                            style: GoogleFonts.poppins(
+                              color: kSlateText,
+                              fontSize: 11.sp,
+                            ),
+                          ),
+                        ],
                       ],
-                    ],
+                    ),
+                  ],
+                ),
+              ),
+              SizedBox(width: 12.w),
+              GestureDetector(
+                onTap: () {
+                  favoritesCubit.removeFavoriteById(item['id'].toString());
+                },
+                child: Container(
+                  width: 36.r,
+                  height: 36.r,
+                  decoration: BoxDecoration(
+                    color: const Color(0xFF0B050F),
+                    shape: BoxShape.circle,
                   ),
-                ],
-              ),
-            ),
-            SizedBox(width: 12.w),
-            GestureDetector(
-              onTap: () {
-                favoritesCubit.removeFavoriteById(item['id'].toString());
-              },
-              child: Container(
-                width: 36.r,
-                height: 36.r,
-                decoration: BoxDecoration(
-                  color: const Color(0xFF0B050F),
-                  shape: BoxShape.circle,
-                ),
-                child: Icon(
-                  Icons.delete_outline,
-                  color: Colors.white,
-                  size: 20.r,
+                  child: Icon(
+                    Icons.delete_outline,
+                    color: Colors.white,
+                    size: 20.r,
+                  ),
                 ),
               ),
-            ),
-          ],
+            ],
+          ),
         ),
-      ),
       ),
     );
   }

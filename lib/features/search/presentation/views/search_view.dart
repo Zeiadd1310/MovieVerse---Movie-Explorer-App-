@@ -248,7 +248,7 @@ class SearchView extends StatelessWidget {
         : movie.releaseDate;
     return GestureDetector(
       onTap: () =>
-          context.push(AppRouter.movieDetailsPath(movie.id.toString())),
+          context.go(AppRouter.movieDetailsPath(movie.id.toString())),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
