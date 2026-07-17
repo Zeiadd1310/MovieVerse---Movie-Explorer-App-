@@ -1,11 +1,16 @@
 import 'dart:ui';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:movie_verse_app/core/constants/constants.dart';
 import 'package:movie_verse_app/core/utils/functions/app_router.dart';
+import 'package:movie_verse_app/features/profile/data/models/user_profile_model.dart';
+import 'package:movie_verse_app/features/profile/presentation/cubits/profile_cubit.dart';
+import 'package:movie_verse_app/features/profile/presentation/cubits/profile_state.dart';
 import 'package:movie_verse_app/features/profile/presentation/views/signout_view.dart';
 
 class ProfileViewBody extends StatelessWidget {
@@ -18,29 +23,47 @@ class ProfileViewBody extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: _backgroundColor,
-      body: Column(
-        children: [
-          _Header(),
-          Expanded(
-            child: SafeArea(
-              top: false,
-              child: SingleChildScrollView(
-                padding: EdgeInsets.only(bottom: 32.h),
-                child: Column(
-                  children: [
-                    _ProfileSection(),
-                    SizedBox(height: 40.h),
-                    _AccountSettingsSection(),
-                  ],
+      body: BlocBuilder<ProfileCubit, ProfileState>(
+        builder: (context, state) {
+          if (state is ProfileLoading || state is ProfileInitial) {
+            return const Center(child: CircularProgressIndicator());
+          }
+          if (state is ProfileError) {
+            return Center(
+              child: Text(
+                state.message,
+                style: const TextStyle(color: Colors.red),
+              ),
+            );
+          }
+
+          final profile = (state as ProfileLoaded).profile;
+
+          return Column(
+            children: [
+              _Header(),
+              Expanded(
+                child: SafeArea(
+                  top: false,
+                  child: SingleChildScrollView(
+                    padding: EdgeInsets.only(bottom: 32.h),
+                    child: Column(
+                      children: [
+                        _ProfileSection(profile: profile),
+                        SizedBox(height: 40.h),
+                        _AccountSettingsSection(),
+                      ],
+                    ),
+                  ),
                 ),
               ),
-            ),
-          ),
-          Padding(
-            padding: EdgeInsets.only(bottom: 24.h, top: 8.h),
-            child: _SignOutButton(),
-          ),
-        ],
+              Padding(
+                padding: EdgeInsets.only(bottom: 24.h, top: 8.h),
+                child: _SignOutButton(),
+              ),
+            ],
+          );
+        },
       ),
     );
   }
@@ -112,58 +135,39 @@ class _IconCircle extends StatelessWidget {
 }
 
 class _ProfileSection extends StatelessWidget {
+  const _ProfileSection({required this.profile});
+
+  final UserProfileModel profile;
+
   @override
   Widget build(BuildContext context) {
     return Padding(
       padding: EdgeInsets.symmetric(horizontal: 24.w),
       child: Column(
         children: [
-          Stack(
-            clipBehavior: Clip.none,
-            children: [
-              Container(
-                width: 128.w,
-                height: 128.w,
-                decoration: BoxDecoration(
-                  shape: BoxShape.circle,
-                  boxShadow: [
-                    BoxShadow(
-                      color: kButtonsColor.withValues(alpha: 0.2),
-                      spreadRadius: 4,
-                    ),
-                  ],
-                  image: const DecorationImage(
-                    image: NetworkImage('https://i.pravatar.cc/256?img=13'),
-                    fit: BoxFit.cover,
-                  ),
+          Container(
+            width: 128.w,
+            height: 128.w,
+            decoration: BoxDecoration(
+              shape: BoxShape.circle,
+              boxShadow: [
+                BoxShadow(
+                  color: kButtonsColor.withValues(alpha: 0.2),
+                  spreadRadius: 4,
                 ),
+              ],
+              image: DecorationImage(
+                image:
+                    (profile.photoUrl != null && profile.photoUrl!.isNotEmpty)
+                    ? NetworkImage(profile.photoUrl!)
+                    : const NetworkImage('https://i.pravatar.cc/256?img=13'),
+                fit: BoxFit.cover,
               ),
-              Positioned(
-                bottom: 4.h,
-                right: 4.w,
-                child: Container(
-                  width: 29.w,
-                  height: 29.w,
-                  decoration: BoxDecoration(
-                    color: kButtonsColor,
-                    shape: BoxShape.circle,
-                    border: Border.all(
-                      color: ProfileViewBody._backgroundColor,
-                      width: 3,
-                    ),
-                  ),
-                  child: Icon(
-                    Icons.edit,
-                    color: const Color(0xFF0E1015),
-                    size: 13.sp,
-                  ),
-                ),
-              ),
-            ],
+            ),
           ),
           SizedBox(height: 16.h),
           Text(
-            'Alex Rivers',
+            profile.fullName,
             style: GoogleFonts.splineSans(
               color: ProfileViewBody._textPrimary,
               fontSize: 24.sp,
@@ -172,20 +176,35 @@ class _ProfileSection extends StatelessWidget {
             ),
           ),
           Text(
-            '@alexrivers',
+            profile.email,
             style: GoogleFonts.splineSans(
               color: kSlateText,
               fontSize: 14.sp,
               fontWeight: FontWeight.w500,
             ),
           ),
+          if (profile.bio.isNotEmpty) ...[
+            SizedBox(height: 12.h),
+            Text(
+              profile.bio,
+              textAlign: TextAlign.center,
+              style: GoogleFonts.splineSans(color: kSlateText, fontSize: 13.sp),
+            ),
+          ],
           SizedBox(height: 24.h),
           Material(
             color: kPrimaryColor,
             borderRadius: BorderRadius.circular(24.r),
             child: InkWell(
               borderRadius: BorderRadius.circular(24.r),
-              onTap: () => context.push(AppRouter.editProfilePath()),
+              onTap: () async {
+                await context.push(AppRouter.editProfilePath());
+                if (context.mounted) {
+                  context.read<ProfileCubit>().loadProfile(
+                    FirebaseAuth.instance.currentUser!.uid,
+                  );
+                }
+              },
               child: Container(
                 height: 44.h,
                 constraints: BoxConstraints(minWidth: 140.w),
