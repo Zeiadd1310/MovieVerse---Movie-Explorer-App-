@@ -39,23 +39,11 @@ class _NotificationsViewBodyState extends State<NotificationsViewBody> {
                     padding: EdgeInsets.all(16.w),
                     child: Row(
                       children: [
-                        SizedBox(
-                          width: 40.w,
-                          height: 40.w,
-                          child: Material(
-                            color: kPrimaryColor,
-                            shape: const CircleBorder(),
-                            child: InkWell(
-                              customBorder: const CircleBorder(),
-                              onTap: () => context.pop(),
-                              child: Icon(
-                                Icons.arrow_back,
-                                color: _textPrimary,
-                                size: 16.sp,
-                              ),
-                            ),
-                          ),
+                        InkWell(
+                          onTap: () => context.pop(),
+                          child: Icon(Icons.arrow_back_ios_new, size: 22.sp),
                         ),
+
                         SizedBox(width: 16.w),
                         Text(
                           'Notification Settings',
@@ -192,7 +180,7 @@ class _NotificationTile extends StatelessWidget {
             onChanged: onChanged,
             activeThumbColor: Colors.white,
             inactiveThumbColor: Colors.white,
-            activeTrackColor: trackColor,
+            activeTrackColor: kButtonsColor,
             inactiveTrackColor: trackColor,
             trackOutlineColor: WidgetStateProperty.all(Colors.transparent),
           ),

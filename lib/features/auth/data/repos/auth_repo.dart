@@ -23,4 +23,9 @@ abstract class AuthRepo {
   Future<Either<Failure, User>> signInWithGoogle();
 
   Future<Either<Failure, User>> signInWithFacebook();
+
+  Future<Either<Failure, Unit>> changePassword({
+    required String currentPassword,
+    required String newPassword,
+  });
 }

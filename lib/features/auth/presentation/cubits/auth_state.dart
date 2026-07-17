@@ -17,3 +17,5 @@ class AuthFailure extends AuthState {
 }
 
 class ForgotPasswordEmailSent extends AuthState {}
+
+class PasswordChanged extends AuthState {}

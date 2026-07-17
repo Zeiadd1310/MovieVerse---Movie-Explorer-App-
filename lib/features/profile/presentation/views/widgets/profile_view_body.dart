@@ -42,6 +42,8 @@ class ProfileViewBody extends StatelessWidget {
           return Column(
             children: [
               _Header(),
+              Divider(color: Color.fromARGB(21, 255, 255, 255)),
+              SizedBox(height: 10.h),
               Expanded(
                 child: SafeArea(
                   top: false,
@@ -81,53 +83,18 @@ class _Header extends StatelessWidget {
             bottom: false,
             child: Padding(
               padding: EdgeInsets.all(16.w),
-              child: Row(
-                children: [
-                  _IconCircle(
-                    icon: Icons.arrow_back_ios_new,
-                    onTap: () => context.canPop() ? context.pop() : null,
-                  ),
-                  Expanded(
-                    child: Text(
-                      'Profile',
-                      textAlign: TextAlign.center,
-                      style: GoogleFonts.splineSans(
-                        color: ProfileViewBody._textPrimary,
-                        fontSize: 22.sp,
-                        fontWeight: FontWeight.bold,
-                        letterSpacing: -0.45,
-                      ),
-                    ),
-                  ),
-                  SizedBox(width: 40.w),
-                ],
+              child: Text(
+                'Profile',
+                textAlign: TextAlign.center,
+                style: GoogleFonts.splineSans(
+                  color: ProfileViewBody._textPrimary,
+                  fontSize: 22.sp,
+                  fontWeight: FontWeight.bold,
+                  letterSpacing: -0.45,
+                ),
               ),
             ),
           ),
-        ),
-      ),
-    );
-  }
-}
-
-class _IconCircle extends StatelessWidget {
-  const _IconCircle({required this.icon, required this.onTap});
-
-  final IconData icon;
-  final VoidCallback onTap;
-
-  @override
-  Widget build(BuildContext context) {
-    return SizedBox(
-      width: 40.w,
-      height: 40.w,
-      child: Material(
-        color: Colors.transparent,
-        shape: const CircleBorder(),
-        child: InkWell(
-          customBorder: const CircleBorder(),
-          onTap: onTap,
-          child: Icon(icon, color: ProfileViewBody._textPrimary, size: 18.sp),
         ),
       ),
     );
