@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:movie_verse_app/features/home/data/repos/home_repo.dart';
 import 'package:movie_verse_app/features/home/presentation/cubits/home_state.dart';
@@ -17,22 +19,25 @@ class HomeCubit extends Cubit<HomeState> {
     try {
       final genres = await homeRepo.getGenres();
       final trendingMovies = await homeRepo.getTrendingMovies();
-      final selectedGenreId = genreId ?? (genres.isNotEmpty ? genres.first.id : null);
+      final selectedGenreId =
+          genreId ?? (genres.isNotEmpty ? genres.first.id : null);
       final movies = await homeRepo.getPopularMovies(genreId: selectedGenreId);
 
       final featuredMovie = movies.isNotEmpty ? movies.first : null;
 
-      emit(HomeSuccess(
-        movies: movies,
-        genres: genres,
-        trendingMovies: trendingMovies,
-        featuredMovie: featuredMovie,
-        selectedGenreId: selectedGenreId,
-        favoriteMovieIds: currentFavorites,
-      ));
+      emit(
+        HomeSuccess(
+          movies: movies,
+          genres: genres,
+          trendingMovies: trendingMovies,
+          featuredMovie: featuredMovie,
+          selectedGenreId: selectedGenreId,
+          favoriteMovieIds: currentFavorites,
+        ),
+      );
     } catch (e) {
-      print("========== API ERROR ==========");
-      print(e.toString());
+      log("========== API ERROR ==========");
+      log(e.toString());
 
       emit(HomeFailure(e.toString()));
     }
@@ -57,14 +62,16 @@ class HomeCubit extends Cubit<HomeState> {
         currentFavorites.add(movieId);
       }
 
-      emit(HomeSuccess(
-        movies: currentState.movies,
-        genres: currentState.genres,
-        trendingMovies: currentState.trendingMovies,
-        featuredMovie: currentState.featuredMovie,
-        selectedGenreId: currentState.selectedGenreId,
-        favoriteMovieIds: currentFavorites,
-      ));
+      emit(
+        HomeSuccess(
+          movies: currentState.movies,
+          genres: currentState.genres,
+          trendingMovies: currentState.trendingMovies,
+          featuredMovie: currentState.featuredMovie,
+          selectedGenreId: currentState.selectedGenreId,
+          favoriteMovieIds: currentFavorites,
+        ),
+      );
     }
   }
 }

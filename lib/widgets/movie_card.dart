@@ -1,14 +1,17 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:movie_verse_app/core/data/static/static_data.dart';
+import 'package:movie_verse_app/features/movie_details/data/models/movie_details_model.dart';
 
 class MovieCard extends StatelessWidget {
-  const MovieCard({super.key});
+  final MovieDetailsModel movie;
+
+  const MovieCard({
+    super.key,
+    required this.movie,
+  });
 
   @override
   Widget build(BuildContext context) {
-    final movie = StaticData.interstellar;
-
     return Container(
       padding: EdgeInsets.all(12.r),
       decoration: BoxDecoration(
@@ -19,31 +22,36 @@ class MovieCard extends StatelessWidget {
         children: [
           ClipRRect(
             borderRadius: BorderRadius.circular(8.r),
-            child: Image.asset(
-              movie.imageAsset,
+            child: Image.network(
+              movie.fullPosterUrl,
               width: 60.w,
               height: 90.h,
               fit: BoxFit.cover,
             ),
           ),
           SizedBox(width: 16.w),
-          Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(
-                movie.title,
-                style: TextStyle(
-                  color: Colors.white,
-                  fontSize: 18.sp,
-                  fontWeight: FontWeight.bold,
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  movie.title,
+                  style: TextStyle(
+                    color: Colors.white,
+                    fontSize: 18.sp,
+                    fontWeight: FontWeight.bold,
+                  ),
                 ),
-              ),
-              SizedBox(height: 4.h),
-              Text(
-                '${movie.director} • ${movie.year}',
-                style: TextStyle(color: Colors.grey, fontSize: 14.sp),
-              ),
-            ],
+                SizedBox(height: 4.h),
+                Text(
+                  movie.releaseYear,
+                  style: TextStyle(
+                    color: Colors.grey,
+                    fontSize: 14.sp,
+                  ),
+                ),
+              ],
+            ),
           ),
         ],
       ),

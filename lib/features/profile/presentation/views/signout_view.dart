@@ -1,14 +1,13 @@
 import 'dart:ui';
 
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:movie_verse_app/core/constants/constants.dart';
+import 'package:movie_verse_app/core/utils/functions/app_router.dart';
+import 'package:movie_verse_app/features/auth/data/repos/auth_repo_impl.dart';
 
-/// The "Sign Out" confirmation modal from the Figma "Sign Out (Midnight
-/// Theme)" screen. Call [SignOutDialog.show] to display it above whatever
-/// screen is currently on-screen (blurred/dimmed to match the design).
 class SignOutDialog extends StatelessWidget {
   const SignOutDialog({super.key});
 
@@ -40,7 +39,11 @@ class SignOutDialog extends StatelessWidget {
                 borderRadius: BorderRadius.circular(48.r),
                 border: Border.all(color: kButtonsColor.withValues(alpha: 0.2)),
                 boxShadow: const [
-                  BoxShadow(color: Colors.black26, blurRadius: 50, offset: Offset(0, 25)),
+                  BoxShadow(
+                    color: Colors.black26,
+                    blurRadius: 50,
+                    offset: Offset(0, 25),
+                  ),
                 ],
               ),
               child: Column(
@@ -53,13 +56,17 @@ class SignOutDialog extends StatelessWidget {
                       color: kButtonsColor.withValues(alpha: 0.2),
                       shape: BoxShape.circle,
                     ),
-                    child: Icon(Icons.logout, color: kButtonsColor, size: 27.sp),
+                    child: Icon(
+                      Icons.logout,
+                      color: kButtonsColor,
+                      size: 27.sp,
+                    ),
                   ),
                   SizedBox(height: 24.h),
                   Text(
                     'Sign Out',
                     style: GoogleFonts.inter(
-                      color: const Color(0xFFF0F2F5),
+                      color: Colors.white,
                       fontSize: 24.sp,
                       fontWeight: FontWeight.bold,
                       letterSpacing: -0.6,
@@ -71,7 +78,7 @@ class SignOutDialog extends StatelessWidget {
                     'enter your credentials to log back into your account.',
                     textAlign: TextAlign.center,
                     style: GoogleFonts.inter(
-                      color: const Color(0xFFF0F2F5).withValues(alpha: 0.8),
+                      color: const Color(0xffF0F2F5).withValues(alpha: 0.8),
                       fontSize: 16.sp,
                       height: 26 / 16,
                     ),
@@ -85,8 +92,15 @@ class SignOutDialog extends StatelessWidget {
                       child: InkWell(
                         borderRadius: BorderRadius.circular(999.r),
                         onTap: () async {
-                          Navigator.of(context).pop();
-                          await FirebaseAuth.instance.signOut();
+                          final navigator = Navigator.of(context);
+                          final authRepo = AuthRepoImpl();
+
+                          navigator.pop();
+                          await authRepo.signOut();
+
+                          if (context.mounted) {
+                            context.go(AppRouter.kSignInView);
+                          }
                         },
                         child: Padding(
                           padding: EdgeInsets.symmetric(vertical: 16.h),
@@ -110,7 +124,9 @@ class SignOutDialog extends StatelessWidget {
                       onPressed: () => Navigator.of(context).pop(),
                       style: OutlinedButton.styleFrom(
                         padding: EdgeInsets.symmetric(vertical: 17.h),
-                        side: BorderSide(color: kButtonsColor.withValues(alpha: 0.3)),
+                        side: BorderSide(
+                          color: kButtonsColor.withValues(alpha: 0.3),
+                        ),
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(999.r),
                         ),

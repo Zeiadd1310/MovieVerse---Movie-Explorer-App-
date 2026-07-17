@@ -209,4 +209,45 @@ class AuthRepoImpl extends AuthRepo {
   User? getCurrentUser() {
     return _firebaseAuth.currentUser;
   }
+
+  @override
+  Future<Either<Failure, Unit>> changePassword({
+    required String currentPassword,
+    required String newPassword,
+  }) async {
+    try {
+      final user = _firebaseAuth.currentUser;
+      if (user == null || user.email == null) {
+        return Left(ServerFailure('No signed-in user found.'));
+      }
+
+      final credential = EmailAuthProvider.credential(
+        email: user.email!,
+        password: currentPassword,
+      );
+
+      await user.reauthenticateWithCredential(credential);
+      await user.updatePassword(newPassword);
+
+      return const Right(unit);
+    } on FirebaseAuthException catch (e) {
+      return Left(ServerFailure(_mapChangePasswordError(e)));
+    } catch (e) {
+      return Left(ServerFailure(e.toString()));
+    }
+  }
+
+  String _mapChangePasswordError(FirebaseAuthException e) {
+    switch (e.code) {
+      case 'wrong-password':
+      case 'invalid-credential':
+        return 'Current password is incorrect.';
+      case 'weak-password':
+        return 'New password is too weak. Use at least 6 characters.';
+      case 'requires-recent-login':
+        return 'Please sign out and sign in again before changing your password.';
+      default:
+        return e.message ?? 'Failed to change password. Please try again.';
+    }
+  }
 }
