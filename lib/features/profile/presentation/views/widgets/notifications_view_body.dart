@@ -5,6 +5,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:movie_verse_app/core/constants/constants.dart';
+import 'package:movie_verse_app/core/services/notification_prefs.dart';
 
 class NotificationsViewBody extends StatefulWidget {
   const NotificationsViewBody({super.key});
@@ -18,9 +19,22 @@ class _NotificationsViewBodyState extends State<NotificationsViewBody> {
   static const _textPrimary = Color(0xFFF1F5F9);
   static const _trackColor = Color(0xFF334155);
 
-  bool _newReleases = true;
-  bool _recommendations = true;
-  bool _watchlistReminders = false;
+  bool _newReleases = notificationPrefs.newReleases;
+  bool _recommendations = notificationPrefs.recommendations;
+  bool _watchlistReminders = notificationPrefs.watchlistReminders;
+
+  @override
+  void initState() {
+    super.initState();
+    notificationPrefs.ensureLoaded().then((_) {
+      if (!mounted) return;
+      setState(() {
+        _newReleases = notificationPrefs.newReleases;
+        _recommendations = notificationPrefs.recommendations;
+        _watchlistReminders = notificationPrefs.watchlistReminders;
+      });
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -90,8 +104,10 @@ class _NotificationsViewBodyState extends State<NotificationsViewBody> {
                           value: _newReleases,
                           trackColor: _trackColor,
                           showDivider: true,
-                          onChanged: (value) =>
-                              setState(() => _newReleases = value),
+                          onChanged: (value) {
+                            setState(() => _newReleases = value);
+                            notificationPrefs.setNewReleases(value);
+                          },
                         ),
                         _NotificationTile(
                           title: 'Recommendations',
@@ -99,8 +115,10 @@ class _NotificationsViewBodyState extends State<NotificationsViewBody> {
                           value: _recommendations,
                           trackColor: _trackColor,
                           showDivider: true,
-                          onChanged: (value) =>
-                              setState(() => _recommendations = value),
+                          onChanged: (value) {
+                            setState(() => _recommendations = value);
+                            notificationPrefs.setRecommendations(value);
+                          },
                         ),
                         _NotificationTile(
                           title: 'Watchlist Reminders',
@@ -108,8 +126,10 @@ class _NotificationsViewBodyState extends State<NotificationsViewBody> {
                           value: _watchlistReminders,
                           trackColor: _trackColor,
                           showDivider: false,
-                          onChanged: (value) =>
-                              setState(() => _watchlistReminders = value),
+                          onChanged: (value) {
+                            setState(() => _watchlistReminders = value);
+                            notificationPrefs.setWatchlistReminders(value);
+                          },
                         ),
                       ],
                     ),

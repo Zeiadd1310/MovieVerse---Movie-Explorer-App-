@@ -44,6 +44,7 @@ class MovieModel {
         'subtitle': releaseYear,
         'rating': voteAverage.toStringAsFixed(1),
         'image': posterUrl,
+        'releaseDate': releaseDate,
       };
 
   factory MovieModel.fromJson(Map<String, dynamic> json) {
