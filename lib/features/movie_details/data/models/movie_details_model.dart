@@ -145,6 +145,7 @@ class MovieDetailsModel {
     'subtitle': '$genreNames • $releaseYear',
     'rating': formattedRating,
     'image': fullPosterUrl,
+    'releaseDate': releaseDate,
   };
 
   /// Whether this movie belongs to a franchise/collection

@@ -1,6 +1,8 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:movie_verse_app/core/services/notification_prefs.dart';
+import 'package:movie_verse_app/core/services/notification_service.dart';
 
 abstract class FavoritesState {}
 
@@ -116,6 +118,7 @@ class FavoritesCubit extends Cubit<FavoritesState> {
         watched: List.from(_watched),
       )); // UI updates instantly
       await docRef.delete(); // Firestore update happens after
+      await NotificationService.instance.cancelForMovie(docId);
     } else {
       _watchlist.add({...item, 'id': docId});
       emit(FavoritesUpdated(
@@ -128,7 +131,30 @@ class FavoritesCubit extends Cubit<FavoritesState> {
         'subtitle': item['subtitle'],
         'rating': item['rating'],
         'image': item['image'],
+        'releaseDate': item['releaseDate'] ?? '',
       }); // Firestore update happens after
+      await _scheduleWatchlistNotifications(docId, item);
+    }
+  }
+
+  Future<void> _scheduleWatchlistNotifications(
+    String docId,
+    Map<String, dynamic> item,
+  ) async {
+    await notificationPrefs.ensureLoaded();
+    final title = item['title'] ?? '';
+    if (notificationPrefs.watchlistReminders) {
+      await NotificationService.instance.scheduleWatchlistReminder(
+        movieId: docId,
+        title: title,
+      );
+    }
+    if (notificationPrefs.newReleases) {
+      await NotificationService.instance.scheduleNewRelease(
+        movieId: docId,
+        title: title,
+        releaseDate: DateTime.tryParse(item['releaseDate'] ?? ''),
+      );
     }
   }
 
@@ -150,6 +176,7 @@ class FavoritesCubit extends Cubit<FavoritesState> {
       watched: List.from(_watched),
     )); // UI updates instantly
     await _watchRef.doc(id).delete(); // Firestore update happens after
+    await NotificationService.instance.cancelForMovie(id);
   }
 
   Future<void> addToWatched(Map<String, dynamic> item) async {
@@ -168,6 +195,7 @@ class FavoritesCubit extends Cubit<FavoritesState> {
     final watchDoc = await _watchRef.doc(docId).get();
     if (watchDoc.exists) {
       await _watchRef.doc(docId).delete();
+      await NotificationService.instance.cancelForMovie(docId);
     }
 
     await _watchedRef.doc(docId).set({
@@ -201,6 +229,7 @@ class FavoritesCubit extends Cubit<FavoritesState> {
       'rating': item['rating'],
       'image': item['image'],
     });
+    await NotificationService.instance.cancelForMovie(docId);
   }
 
   Future<void> removeWatchedById(String id) async {

@@ -229,6 +229,7 @@ class MovieDetailsView extends StatelessWidget {
                         'rating': movie.voteAverage.toStringAsFixed(1),
                         'image':
                             'https://image.tmdb.org/t/p/w500${movie.posterPath}',
+                        'releaseDate': movie.releaseDate,
                       };
                       final isInWatchlist = cubit.isInWatchlist(
                         movie.id.toString(),
